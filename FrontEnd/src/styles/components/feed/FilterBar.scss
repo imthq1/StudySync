@@ -1,0 +1,59 @@
+@use "../../variables" as *;
+
+.filter-bar__tabs {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 14px;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  padding: 4px;
+}
+
+.filter-bar__tab {
+  flex: 1;
+  padding: 8px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  background: none;
+  color: $text-secondary;
+  font-weight: 400;
+  font-size: 13px;
+  font-family: $font-sans;
+  transition: all 0.15s;
+
+  &--active {
+    background: $card;
+    color: $text-primary;
+    font-weight: 700;
+  }
+}
+
+.filter-bar__tags {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
+}
+
+.filter-bar__tag {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: $radius-pill;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid $border;
+  background: none;
+  color: $text-secondary;
+  cursor: pointer;
+  font-family: $font-sans;
+  transition: all 0.15s;
+
+  &--active {
+    border-color: $accent;
+    background: $accent-soft;
+    color: $accent;
+  }
+}

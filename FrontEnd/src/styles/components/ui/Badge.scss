@@ -1,0 +1,11 @@
+.badge {
+  background: color-mix(in srgb, var(--badge-color) 13%, transparent);
+  color: var(--badge-color);
+  border: 1px solid color-mix(in srgb, var(--badge-color) 27%, transparent);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-family: "DM Sans", sans-serif;
+}

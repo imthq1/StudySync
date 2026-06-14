@@ -1,0 +1,15 @@
+.avatar {
+  width: var(--avatar-size, 36px);
+  height: var(--avatar-size, 36px);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--avatar-color, #6c8fff) 20%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--avatar-color, #6c8fff) 33%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--avatar-size, 36px) * 0.33);
+  font-weight: 700;
+  color: var(--avatar-color, #6c8fff);
+  flex-shrink: 0;
+  font-family: "DM Sans", sans-serif;
+}

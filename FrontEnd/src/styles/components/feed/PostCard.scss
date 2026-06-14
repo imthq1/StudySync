@@ -1,0 +1,88 @@
+@use "../../variables" as *;
+
+.post-card {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  padding: 16px 18px;
+  cursor: pointer;
+  animation: fadeUp 0.4s ease both;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--post-color) 40%, transparent);
+  }
+}
+
+.post-card__body {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.post-card__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-card__meta-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 7px;
+}
+
+.post-card__type-badge {
+  font-size: 11px;
+  color: var(--post-color);
+  background: var(--post-soft);
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-weight: 700;
+}
+
+.post-card__title {
+  font-weight: 700;
+  font-size: 14px;
+  color: $text-primary;
+  line-height: 1.45;
+  margin-bottom: 10px;
+  font-family: $font-serif;
+}
+
+.post-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-card__author {
+  font-size: 12px;
+  color: $text-secondary;
+}
+
+.post-card__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.post-card__like-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $text-muted;
+  font-size: 12px;
+  padding: 0;
+  transition: color 0.2s;
+  font-family: $font-sans;
+
+  &--liked {
+    color: var(--post-color);
+  }
+}
+
+.post-card__comments {
+  color: $text-muted;
+  font-size: 12px;
+}
