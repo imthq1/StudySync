@@ -1,0 +1,492 @@
+.app-shell {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.home-main {
+  width: min(100% - 48px, 1180px);
+  padding: 56px 0 80px;
+  margin: 0 auto;
+}
+
+.welcome-section,
+.section-heading,
+.post-author,
+.post-meta,
+.goal-card-header,
+.room-item,
+.stat-card {
+  display: flex;
+  align-items: center;
+}
+
+.welcome-section {
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 8px;
+  color: #6366f1;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.welcome-section h1,
+.section-heading h2,
+.goal-card h2,
+.feature-placeholder h1 {
+  margin: 0;
+  color: #0f172a;
+  letter-spacing: -0.035em;
+}
+
+.welcome-section h1 {
+  font-size: clamp(32px, 4vw, 44px);
+  line-height: 1.1;
+}
+
+.welcome-section > div > p:last-child {
+  margin: 12px 0 0;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.primary-action {
+  min-height: 46px;
+  flex: 0 0 auto;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.stat-card {
+  position: relative;
+  gap: 14px;
+  min-height: 108px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.stat-card > div {
+  display: grid;
+  gap: 4px;
+}
+
+.stat-card strong {
+  color: #0f172a;
+  font-size: 22px;
+  letter-spacing: -0.03em;
+}
+
+.stat-card span:not(.stat-icon) {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.stat-card em {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  color: #16a34a;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.stat-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 14px;
+}
+
+.stat-icon--indigo { color: #4f46e5; background: #eef2ff; }
+.stat-icon--cyan { color: #0891b2; background: #ecfeff; }
+.stat-icon--purple { color: #7c3aed; background: #f5f3ff; }
+
+.home-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 40px;
+  align-items: start;
+}
+
+.section-heading {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section-heading h2,
+.goal-card h2 {
+  font-size: 22px;
+}
+
+.text-action,
+.icon-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  color: #4f46e5;
+  background: transparent;
+  border: 0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.topic-list {
+  display: flex;
+  gap: 8px;
+  padding: 20px 0;
+  overflow-x: auto;
+}
+
+.topic-list button {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.topic-list button:first-child,
+.topic-list button:hover {
+  color: #4338ca;
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+.post-list {
+  display: grid;
+  gap: 16px;
+}
+
+.post-card,
+.goal-card,
+.rooms-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.post-card {
+  padding: 24px;
+  transition: box-shadow 200ms ease-out, transform 200ms ease-out;
+}
+
+.post-card:hover {
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  transform: translateY(-2px);
+}
+
+.post-author {
+  gap: 10px;
+}
+
+.post-avatar {
+  background: linear-gradient(135deg, #f97316, #db2777);
+}
+
+.post-author div {
+  display: grid;
+  gap: 2px;
+}
+
+.post-author strong {
+  color: #1e293b;
+  font-size: 14px;
+}
+
+.post-author span:not(.post-avatar) {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.post-author button,
+.post-meta button {
+  display: grid;
+  padding: 5px;
+  margin-left: auto;
+  color: #94a3b8;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.post-author button:hover,
+.post-meta button:hover {
+  color: #4f46e5;
+  background: #eef2ff;
+}
+
+.post-card h3 {
+  margin: 20px 0 8px;
+  color: #0f172a;
+  font-size: 18px;
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+}
+
+.post-card > p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.post-tags {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 20px;
+}
+
+.post-tags span {
+  color: #4f46e5;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.post-meta {
+  gap: 18px;
+  padding-top: 16px;
+  color: #94a3b8;
+  border-top: 1px solid #f1f5f9;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.post-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.post-meta button {
+  margin-left: auto;
+}
+
+.home-sidebar {
+  display: grid;
+  gap: 20px;
+}
+
+.goal-card {
+  padding: 24px;
+  color: #ffffff;
+  background: linear-gradient(145deg, #312e81, #4f46e5 56%, #0891b2);
+  border: 0;
+  box-shadow: 0 20px 40px rgba(79, 70, 229, 0.2);
+}
+
+.goal-card-header {
+  justify-content: space-between;
+  color: #c7d2fe;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.goal-card-header strong {
+  color: #ffffff;
+}
+
+.goal-card h2 {
+  margin-top: 24px;
+  color: #ffffff;
+}
+
+.goal-progress {
+  height: 8px;
+  margin: 16px 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+}
+
+.goal-progress span {
+  display: block;
+  width: 72%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: inherit;
+}
+
+.goal-card > p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: #e0e7ff;
+  font-size: 13px;
+}
+
+.rooms-card {
+  padding: 24px;
+}
+
+.room-item {
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.room-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: #4f46e5;
+  background: #eef2ff;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.room-icon--cyan {
+  color: #0891b2;
+  background: #ecfeff;
+}
+
+.room-item div {
+  display: grid;
+  gap: 4px;
+}
+
+.room-item strong {
+  color: #334155;
+  font-size: 13px;
+}
+
+.room-item span:not(.room-icon) {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.room-item i {
+  width: 6px;
+  height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+}
+
+.secondary-action {
+  width: 100%;
+  margin-top: 16px;
+  color: #4f46e5;
+  background: #eef2ff;
+  border: 0;
+}
+
+.secondary-action:hover {
+  background: #e0e7ff;
+}
+
+.feature-placeholder {
+  display: grid;
+  width: min(100% - 48px, 680px);
+  justify-items: center;
+  gap: 14px;
+  padding: 128px 24px;
+  margin: 0 auto;
+  color: #64748b;
+  text-align: center;
+}
+
+.feature-placeholder > svg {
+  color: #6366f1;
+}
+
+.feature-placeholder p {
+  max-width: 440px;
+  margin: 0;
+  line-height: 1.65;
+}
+
+.feature-placeholder a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  color: #4f46e5;
+  background: #eef2ff;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .home-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-sidebar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .home-main {
+    width: min(100% - 32px, 1180px);
+    padding: 32px 0 56px;
+  }
+
+  .welcome-section {
+    display: grid;
+    margin-bottom: 32px;
+  }
+
+  .primary-action {
+    width: 100%;
+  }
+
+  .stat-grid,
+  .home-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-grid {
+    margin-bottom: 36px;
+  }
+
+  .post-card,
+  .goal-card,
+  .rooms-card {
+    padding: 20px;
+  }
+
+  .post-meta {
+    gap: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-card,
+  .create-post-button,
+  .primary-action {
+    transition: none;
+  }
+}
