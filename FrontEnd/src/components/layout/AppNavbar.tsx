@@ -10,14 +10,24 @@ import {
   UserRound,
 } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { clearAuthSession } from '../../services/auth.service'
+import { useAuth } from '../../hooks/useAuth'
 import '../../styles/navbar.css'
 
 function AppNavbar() {
   const navigate = useNavigate()
+  const { signOut, user } = useAuth()
+  const userName = user?.name ?? 'Người dùng'
+  const userEmail = user?.email ?? ''
+  const userInitials = userName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
 
   function handleLogout() {
-    clearAuthSession()
+    signOut()
     navigate('/login')
   }
 
@@ -51,14 +61,14 @@ function AppNavbar() {
 
           <details className="user-menu">
             <summary aria-label="Mở menu tài khoản">
-              <span className="user-avatar">MN</span>
-              <span className="user-name">Minh Nguyễn</span>
+              <span className="user-avatar">{userInitials}</span>
+              <span className="user-name">{userName}</span>
               <ChevronDown size={16} aria-hidden="true" />
             </summary>
             <div className="user-menu-popover">
               <div className="user-menu-header">
-                <span className="user-avatar user-avatar--large">MN</span>
-                <span><strong>Minh Nguyễn</strong><small>minh@studysync.vn</small></span>
+                <span className="user-avatar user-avatar--large">{userInitials}</span>
+                <span><strong>{userName}</strong><small>{userEmail}</small></span>
               </div>
               <div className="user-menu-links">
                 <Link to="/profile"><UserRound size={17} aria-hidden="true" /> Hồ sơ</Link>

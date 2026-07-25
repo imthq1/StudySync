@@ -2,8 +2,9 @@ import { useState, type FormEvent } from 'react'
 import { ArrowRight, Mail } from 'lucide-react'
 import AuthLayout from '../components/auth/AuthLayout'
 import PasswordField from '../components/auth/PasswordField'
+import { useAuth } from '../hooks/useAuth'
 import { getApiErrorMessage } from '../services/api-client'
-import { login, saveAuthSession } from '../services/auth.service'
+import { login } from '../services/auth.service'
 
 interface LoginPageProps {
   onLoggedIn: () => void
@@ -11,6 +12,7 @@ interface LoginPageProps {
 }
 
 function LoginPage({ onLoggedIn, onNavigateToRegister }: LoginPageProps) {
+  const { signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -23,7 +25,7 @@ function LoginPage({ onLoggedIn, onNavigateToRegister }: LoginPageProps) {
 
     try {
       const session = await login({ email, password })
-      saveAuthSession(session)
+      signIn(session)
       onLoggedIn()
     } catch (error) {
       setErrorMessage(getApiErrorMessage(error, 'Đăng nhập không thành công. Vui lòng thử lại.'))

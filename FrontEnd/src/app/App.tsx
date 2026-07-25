@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
 import HomePage from '../pages/HomePage'
 import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
@@ -26,15 +28,31 @@ function RegisterRoute() {
   )
 }
 
+interface RouteGuardProps {
+  children: ReactNode
+}
+
+function ProtectedRoute({ children }: RouteGuardProps) {
+  const { isAuthenticated } = useAuth()
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />
+}
+
+function PublicOnlyRoute({ children }: RouteGuardProps) {
+  const { isAuthenticated } = useAuth()
+
+  return isAuthenticated ? <Navigate to="/" replace /> : children
+}
+
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<LoginRoute />} />
-      <Route path="/register" element={<RegisterRoute />} />
-      <Route path="/profile" element={<UserFeaturePage title="Hồ sơ cá nhân" />} />
-      <Route path="/saved-posts" element={<UserFeaturePage title="Bài viết đã lưu" />} />
-      <Route path="/settings" element={<UserFeaturePage title="Cài đặt" />} />
+      <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+      <Route path="/login" element={<PublicOnlyRoute><LoginRoute /></PublicOnlyRoute>} />
+      <Route path="/register" element={<PublicOnlyRoute><RegisterRoute /></PublicOnlyRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><UserFeaturePage title="Hồ sơ cá nhân" /></ProtectedRoute>} />
+      <Route path="/saved-posts" element={<ProtectedRoute><UserFeaturePage title="Bài viết đã lưu" /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><UserFeaturePage title="Cài đặt" /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
