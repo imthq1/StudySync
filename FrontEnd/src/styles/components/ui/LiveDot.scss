@@ -1,9 +1,0 @@
-.live-dot {
-  width: var(--live-dot-size, 6px);
-  height: var(--live-dot-size, 6px);
-  border-radius: 50%;
-  background: var(--live-dot-color, #3ecfa0);
-  display: inline-block;
-  animation: pulse 1.5s infinite;
-  flex-shrink: 0;
-}

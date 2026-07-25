@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: studysync-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST}/${DB_NAME}?sslmode=require&channelBinding=require
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "false"
+
+      IMTHANG_JWT_BASE64_SECRET: ${JWT_SECRET}
+      IMTHANG_JWT_ACCESS_TOKEN_VALIDITY_IN_SECONDS: 3600
+      IMTHANG_JWT_REFRESH_TOKEN_VALIDITY_IN_SECONDS: 604800
+
+      SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 20MB
+      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 25MB
+      STUDYSYNC_UPLOAD_DIR: /app/uploads/documents
+
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+    volumes:
+      - uploads-data:/app/uploads/documents
+    networks:
+      - app-network
+
+volumes:
+  uploads-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
