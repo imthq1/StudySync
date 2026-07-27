@@ -1,23 +1,133 @@
 .app-navbar {
   position: sticky;
-  z-index: 10;
+  z-index: 20;
   top: 0;
-  border-bottom: 1px solid #e2e8f0;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(16px);
+  height: 58px;
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid #e7ebf3;
+  backdrop-filter: blur(14px);
 }
 
 .navbar-content {
   display: flex;
-  width: min(100% - 48px, 1280px);
-  height: 72px;
+  height: 100%;
   align-items: center;
-  gap: 40px;
-  margin: 0 auto;
+  gap: 12px;
+  padding: 0 16px 0 10px;
 }
 
-.navbar-links,
-.navbar-actions,
+.study-brand {
+  display: flex;
+  width: 36px;
+  align-items: center;
+  gap: 10px;
+  color: #1e293b;
+  text-decoration: none;
+}
+
+.study-brand > span {
+  position: relative;
+  display: block;
+  width: 25px;
+  height: 32px;
+  transform: rotate(45deg);
+}
+
+.study-brand i {
+  position: absolute;
+  width: 13px;
+  height: 25px;
+  background: #4f46e5;
+  border-radius: 5px;
+}
+
+.study-brand i:first-child {
+  top: 0;
+  left: 0;
+  background: #38bdf8;
+}
+
+.study-brand i:last-child {
+  right: 0;
+  bottom: 0;
+}
+
+.study-brand strong {
+  display: none;
+  font-size: 17px;
+}
+
+.finish-session-button,
+.start-focus-button,
+.timer-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.finish-session-button {
+  min-height: 38px;
+  padding: 0 16px;
+  color: #ffffff;
+  background: #4389f7;
+  border: 0;
+  box-shadow: 0 6px 15px rgba(67, 137, 247, 0.2);
+}
+
+.navbar-session-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.start-focus-button {
+  min-height: 38px;
+  gap: 8px;
+  padding: 0 14px;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dde5ef;
+}
+
+.start-focus-button > span {
+  display: grid;
+  line-height: 1.05;
+  text-align: left;
+}
+
+.start-focus-button strong {
+  font-size: 12px;
+}
+
+.start-focus-button small {
+  color: #64748b;
+  font-size: 9px;
+  text-align: center;
+}
+
+.timer-button {
+  min-width: 72px;
+  min-height: 38px;
+  gap: 6px;
+  padding: 0 10px;
+  color: #3b82f6;
+  background: #f8fbff;
+  border: 1px solid #dde5ef;
+}
+
+.timer-button span {
+  color: #475569;
+  font-size: 12px;
+}
+
+.user-menu {
+  position: relative;
+}
+
 .user-menu summary,
 .user-menu-header,
 .user-menu-links a,
@@ -26,104 +136,13 @@
   align-items: center;
 }
 
-.navbar-links {
-  gap: 28px;
-  flex: 1;
-}
-
-.navbar-links a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #64748b;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 150ms ease-out;
-}
-
-.navbar-links a:hover,
-.navbar-links a.active {
-  color: #4f46e5;
-}
-
-.navbar-actions {
-  gap: 10px;
-}
-
-.navbar-icon-button,
 .user-menu summary {
-  position: relative;
+  gap: 8px;
+  padding: 4px 6px 4px 4px;
   color: #475569;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-}
-
-.navbar-icon-button {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border-radius: 12px;
-}
-
-.navbar-icon-button:hover {
-  color: #4f46e5;
-  background: #eef2ff;
-}
-
-.notification-dot {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 7px;
-  height: 7px;
-  background: #ef4444;
-  border: 1.5px solid #ffffff;
-  border-radius: 50%;
-}
-
-.create-post-button,
-.primary-action,
-.secondary-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 40px;
-  padding: 0 16px;
-  font-size: 14px;
-  font-weight: 700;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 150ms ease-out, background 150ms ease-out, box-shadow 150ms ease-out;
-}
-
-.create-post-button,
-.primary-action {
-  color: #ffffff;
-  background: #4f46e5;
-  border: 0;
-  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.2);
-}
-
-.create-post-button:hover,
-.primary-action:hover {
-  background: #4338ca;
-  box-shadow: 0 10px 22px rgba(79, 70, 229, 0.27);
-  transform: translateY(-1px);
-}
-
-.user-menu {
-  position: relative;
-}
-
-.user-menu summary {
-  gap: 8px;
-  padding: 4px;
   list-style: none;
   border-radius: 12px;
+  cursor: pointer;
 }
 
 .user-menu summary::-webkit-details-marker {
@@ -131,34 +150,23 @@
 }
 
 .user-menu summary:hover {
-  background: #f8fafc;
+  background: #f1f5f9;
 }
 
-.user-menu[open] summary svg {
+.user-menu[open] summary > svg {
   transform: rotate(180deg);
 }
 
-.user-name {
-  max-width: 108px;
-  overflow: hidden;
-  color: #334155;
-  font-size: 14px;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.user-avatar,
-.post-avatar {
+.user-avatar {
   display: grid;
-  flex: 0 0 auto;
   width: 32px;
   height: 32px;
+  flex: 0 0 auto;
   place-items: center;
   color: #ffffff;
-  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  background: linear-gradient(135deg, #7c3aed, #38bdf8);
   border-radius: 50%;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
 }
 
@@ -167,9 +175,19 @@
   height: 40px;
 }
 
+.user-name {
+  max-width: 112px;
+  overflow: hidden;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .user-menu-popover {
   position: absolute;
-  top: calc(100% + 12px);
+  top: calc(100% + 10px);
   right: 0;
   width: 254px;
   padding: 8px;
@@ -185,9 +203,17 @@
   border-bottom: 1px solid #e2e8f0;
 }
 
-.user-menu-header span:last-child {
+.user-menu-header > span:last-child {
   display: grid;
+  min-width: 0;
   gap: 2px;
+}
+
+.user-menu-header strong,
+.user-menu-header small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-menu-header strong {
@@ -236,39 +262,41 @@
   background: #fef2f2;
 }
 
-@media (max-width: 900px) {
-  .navbar-content {
-    gap: 20px;
+@media (min-width: 1180px) {
+  .study-brand {
+    width: 132px;
   }
 
-  .navbar-links {
-    display: none;
+  .study-brand strong {
+    display: inline;
   }
 }
 
 @media (max-width: 600px) {
   .navbar-content {
-    width: min(100% - 32px, 1280px);
-    height: 64px;
-    gap: 8px;
+    padding-right: 10px;
   }
 
-  .navbar-actions {
-    margin-left: auto;
+  .finish-session-button {
+    padding: 0 11px;
+    font-size: 12px;
   }
 
-  .navbar-icon-button:first-child,
+  .start-focus-button span,
+  .timer-button span,
   .user-name,
   .user-menu summary > svg {
     display: none;
   }
 
-  .create-post-button {
+  .start-focus-button,
+  .timer-button {
+    min-width: 38px;
     width: 38px;
     padding: 0;
   }
 
-  .create-post-button span {
-    display: none;
+  .navbar-session-actions {
+    gap: 5px;
   }
 }

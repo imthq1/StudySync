@@ -1,15 +1,13 @@
 import {
-  Bell,
   Bookmark,
   ChevronDown,
-  Compass,
+  Clock3,
   LogOut,
-  PenSquare,
-  Search,
+  Play,
   Settings,
   UserRound,
 } from 'lucide-react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import '../../styles/navbar.css'
 
@@ -33,31 +31,20 @@ function AppNavbar() {
 
   return (
     <header className="app-navbar">
-      <nav className="navbar-content" aria-label="Điều hướng chính">
-        <Link className="brand" to="/" aria-label="StudySync trang chủ">
-          <span className="brand-mark" aria-hidden="true">S</span>
-          StudySync
+      <nav className="navbar-content" aria-label="Điều hướng phiên học">
+        <Link className="study-brand" to="/" aria-label="StudySync trang chủ">
+          <span aria-hidden="true"><i /><i /></span>
+          <strong>StudySync</strong>
         </Link>
 
-        <div className="navbar-links">
-          <NavLink to="/" end>Trang chủ</NavLink>
-          <a href="#discover"><Compass size={16} aria-hidden="true" /> Khám phá</a>
-          <a href="#questions">Hỏi đáp</a>
-          <a href="#study-rooms">Phòng học</a>
-        </div>
+        <button className="finish-session-button" type="button">Kết thúc phiên</button>
 
-        <div className="navbar-actions">
-          <button className="navbar-icon-button" type="button" aria-label="Tìm kiếm">
-            <Search size={19} aria-hidden="true" />
+        <div className="navbar-session-actions">
+          <button className="start-focus-button" type="button">
+            <Play size={16} fill="currentColor" aria-hidden="true" />
+            <span><strong>Bắt đầu tập trung</strong><small>Focus+</small></span>
           </button>
-          <button className="navbar-icon-button" type="button" aria-label="Thông báo">
-            <Bell size={19} aria-hidden="true" />
-            <span className="notification-dot" aria-hidden="true" />
-          </button>
-          <button className="create-post-button" type="button">
-            <PenSquare size={17} aria-hidden="true" />
-            <span>Viết bài</span>
-          </button>
+          <button className="timer-button" type="button" aria-label="Đồng hồ Pomodoro"><Clock3 size={18} /><span>25:00</span></button>
 
           <details className="user-menu">
             <summary aria-label="Mở menu tài khoản">
