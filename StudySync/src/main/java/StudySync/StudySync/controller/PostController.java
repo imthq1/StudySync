@@ -66,14 +66,11 @@ public class PostController {
 
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     @ApiMessage("Upload document success")
-    public ResponseEntity<PostResponse> upload(
-            @RequestParam String title,
-            @RequestParam MultipartFile file,
-            @RequestParam(required = false) String tags) {
-        List<String> tagNames = tags == null || tags.isBlank()
-                ? List.of()
-                : Arrays.stream(tags.split(",")).map(String::trim).toList();
-        return ResponseEntity.ok(postService.uploadFile(title, file, tagNames));
+    public ResponseEntity<Void> upload(
+            @RequestParam MultipartFile file
+      ) {
+        postService.uploadFile(file);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")

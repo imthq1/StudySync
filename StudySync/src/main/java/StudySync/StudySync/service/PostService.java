@@ -110,24 +110,8 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponse uploadFile(String title, MultipartFile file, java.util.List<String> tagNames) {
-        if (title == null || title.isBlank()) {
-            throw new BadRequestException("Title is required");
-        }
-
-        Long userId = securityUtil.getCurrentUserIdOrThrow();
-        User author = userService.getUserOrThrow(userId);
-        String fileUrl = fileStorageService.store(file);
-
-        Post post = Post.builder()
-                .author(author)
-                .title(title.trim())
-                .contentType(ContentType.FILE)
-                .fileUrl(fileUrl)
-                .tags(tagService.resolveTags(tagNames))
-                .build();
-
-        return toResponse(postRepository.save(post));
+    public void uploadFile(MultipartFile file) {
+        fileStorageService.store(file);
     }
 
     @Transactional
@@ -175,6 +159,8 @@ public class PostService {
         long commentCount = commentRepository.countByPostId(post.getId());
         boolean liked = interactionService.isLikedByUser(post.getId(), currentUserId);
         boolean bookmarked = interactionService.isBookmarkedByUser(post.getId(), currentUserId);
-        return PostMapper.toResponse(post, likeCount, commentCount, liked, bookmarked);
+        PostResponse response = PostMapper.toResponse(post, likeCount, commentCount, liked, bookmarked);
+        response.setFileUrl(fileStorageService.createDownloadUrl(post.getFileUrl()));
+        return response;
     }
 }
