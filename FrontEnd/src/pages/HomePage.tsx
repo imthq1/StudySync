@@ -1,73 +1,193 @@
-import { ArrowRight, Bookmark, Clock3, Flame, MessageCircle, MoreHorizontal, Plus, Users } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Grid2X2,
+  Link2,
+  ListFilter,
+  MessageCircle,
+  Pin,
+  Plus,
+  Search,
+  Smile,
+  Sparkles,
+  Users,
+} from 'lucide-react'
 import AppNavbar from '../components/layout/AppNavbar'
+import StudySidebar from '../components/layout/StudySidebar'
 import '../styles/home.css'
 
-const studyTopics = ['React', 'TypeScript', 'UI/UX', 'IELTS']
-
-const posts = [
+const studyRooms = [
   {
-    author: 'Linh Trần',
+    name: 'Linh Trần',
     initials: 'LT',
-    time: '12 phút trước',
-    title: '5 cách tổ chức component React để dự án dễ mở rộng',
-    excerpt: 'Mình tổng hợp cách phân tách feature, shared component và quản lý state để codebase không trở nên phức tạp theo thời gian.',
-    tags: ['React', 'Architecture'],
-    likes: 48,
-    comments: 12,
+    subject: 'React Architecture',
+    status: 'Hoàn thiện feature authentication',
+    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 48,
+    reactions: 23,
   },
   {
-    author: 'Khánh An',
+    name: 'Khánh An',
     initials: 'KA',
-    time: '1 giờ trước',
-    title: 'Lộ trình tự học IELTS Writing từ 5.5 lên 7.0',
-    excerpt: 'Một kế hoạch 12 tuần có thể áp dụng ngay, kèm bộ tài liệu và cách mình nhận feedback mỗi ngày.',
-    tags: ['IELTS', 'Writing'],
-    likes: 91,
-    comments: 24,
+    subject: 'IELTS Writing',
+    status: 'Essay task 2 · Deep focus',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 52,
+    reactions: 18,
+  },
+  {
+    name: 'Minh Phạm',
+    initials: 'MP',
+    subject: 'Data Structures',
+    status: 'Ôn tập graph algorithms',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 36,
+    reactions: 14,
+  },
+  {
+    name: 'Thảo Nguyên',
+    initials: 'TN',
+    subject: 'UI/UX Design',
+    status: 'Design system exploration',
+    image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 41,
+    reactions: 31,
+  },
+  {
+    name: 'Hoàng Nam',
+    initials: 'HN',
+    subject: 'Node.js',
+    status: 'Xây dựng REST API',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 57,
+    reactions: 27,
+  },
+  {
+    name: 'Mai Anh',
+    initials: 'MA',
+    subject: 'Medical Science',
+    status: 'Reviewing clinical notes',
+    image: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 44,
+    reactions: 16,
+  },
+  {
+    name: 'Tuấn Kiệt',
+    initials: 'TK',
+    subject: 'System Design',
+    status: 'Distributed systems · Chapter 4',
+    image: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 50,
+    reactions: 38,
+  },
+  {
+    name: 'Gia Hân',
+    initials: 'GH',
+    subject: 'Digital Marketing',
+    status: 'Lên kế hoạch nội dung tháng 8',
+    image: 'https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 39,
+    reactions: 21,
+  },
+  {
+    name: 'Đức Anh',
+    initials: 'ĐA',
+    subject: 'Cyber Security',
+    status: 'Preparing for certification',
+    image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 46,
+    reactions: 19,
+  },
+  {
+    name: 'Ngọc Hà',
+    initials: 'NH',
+    subject: 'Business English',
+    status: 'Presentation practice',
+    image: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 34,
+    reactions: 25,
+  },
+  {
+    name: 'Quốc Bảo',
+    initials: 'QB',
+    subject: 'Machine Learning',
+    status: 'Training first image model',
+    image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 55,
+    reactions: 42,
+  },
+  {
+    name: 'Yến Nhi',
+    initials: 'YN',
+    subject: 'Advanced Mathematics',
+    status: 'Linear algebra problem set',
+    image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80',
+    focusMinutes: 43,
+    reactions: 29,
   },
 ]
 
 function HomePage() {
   return (
-    <div className="app-shell">
+    <div className="study-app-shell">
       <AppNavbar />
-      <main className="home-main">
-        <section className="welcome-section" aria-labelledby="welcome-title">
-          <div>
-            <p className="section-eyebrow"><Flame size={17} aria-hidden="true" /> Thứ Hai, 20 tháng 7</p>
-            <h1 id="welcome-title">Chào buổi sáng, Minh.</h1>
-            <p>Tiếp tục xây dựng nhịp học tập của bạn, từng bước một.</p>
-          </div>
-          <button className="primary-action" type="button"><Plus size={18} aria-hidden="true" /> Chia sẻ kiến thức</button>
-        </section>
+      <StudySidebar />
 
-        <section className="stat-grid" aria-label="Thống kê học tập">
-          <article className="stat-card"><span className="stat-icon stat-icon--indigo"><Clock3 size={20} /></span><div><strong>12.5 giờ</strong><span>Thời gian học tuần này</span></div><em>+18%</em></article>
-          <article className="stat-card"><span className="stat-icon stat-icon--cyan"><Flame size={20} /></span><div><strong>7 ngày</strong><span>Chuỗi học tập</span></div><em>Đỉnh mới</em></article>
-          <article className="stat-card"><span className="stat-icon stat-icon--purple"><Users size={20} /></span><div><strong>24</strong><span>Bạn đồng hành</span></div><em>+3 tuần này</em></article>
-        </section>
-
-        <div className="home-layout">
-          <section className="feed-section" id="discover" aria-labelledby="feed-title">
-            <div className="section-heading"><div><p className="section-eyebrow">Dành cho bạn</p><h2 id="feed-title">Khám phá từ cộng đồng</h2></div><button className="text-action" type="button">Xem tất cả <ArrowRight size={16} /></button></div>
-            <div className="topic-list">{studyTopics.map((topic) => <button type="button" key={topic}>#{topic}</button>)}</div>
-            <div className="post-list">
-              {posts.map((post) => (
-                <article className="post-card" key={post.title}>
-                  <header className="post-author"><span className="post-avatar">{post.initials}</span><div><strong>{post.author}</strong><span>{post.time}</span></div><button type="button" aria-label={`Tùy chọn bài viết của ${post.author}`}><MoreHorizontal size={20} /></button></header>
-                  <h3>{post.title}</h3><p>{post.excerpt}</p>
-                  <div className="post-tags">{post.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div>
-                  <footer className="post-meta"><span><Flame size={16} /> {post.likes} lượt thích</span><span><MessageCircle size={16} /> {post.comments} bình luận</span><button type="button" aria-label="Lưu bài viết"><Bookmark size={18} /></button></footer>
-                </article>
-              ))}
+      <main className="study-dashboard">
+        <section className="study-toolbar" aria-label="Bộ điều khiển phòng học">
+          <div className="study-session-card">
+            <span className="live-indicator" aria-hidden="true" />
+            <div>
+              <strong>Phòng học cộng đồng</strong>
+              <span>259 người đang tập trung</span>
             </div>
-          </section>
+          </div>
 
-          <aside className="home-sidebar">
-            <section className="goal-card"><div className="goal-card-header"><span>Tiến độ tuần này</span><strong>72%</strong></div><h2>React TypeScript</h2><div className="goal-progress" role="progressbar" aria-label="Tiến độ React TypeScript" aria-valuenow={72} aria-valuemin={0} aria-valuemax={100}><span /></div><p><Clock3 size={15} /> Còn 3 giờ để đạt mục tiêu</p></section>
-            <section className="rooms-card" id="study-rooms"><div className="section-heading"><div><p className="section-eyebrow">Đang diễn ra</p><h2>Phòng học</h2></div><button type="button" className="icon-link" aria-label="Xem thêm phòng học"><ArrowRight size={17} /></button></div><article className="room-item"><span className="room-icon">⌘</span><div><strong>Deep Focus Room</strong><span><i /> 18 đang học</span></div></article><article className="room-item"><span className="room-icon room-icon--cyan">Aa</span><div><strong>IELTS Writing Sprint</strong><span><i /> 12 đang học</span></div></article><button className="secondary-action" type="button">Khám phá phòng học</button></section>
-          </aside>
-        </div>
+          <div className="page-control" aria-label="Phân trang">
+            <button type="button" aria-label="Trang trước"><ChevronLeft size={19} /></button>
+            <strong>1 / 12</strong>
+            <button type="button" aria-label="Trang tiếp theo"><ChevronRight size={19} /></button>
+          </div>
+
+          <div className="view-controls">
+            <button className="filter-button" type="button"><ListFilter size={17} /> Tìm bạn học</button>
+            <div className="view-switch" aria-label="Chế độ hiển thị">
+              <button className="is-active" type="button"><Grid2X2 size={16} /> Lưới</button>
+              <button type="button">Không gian</button>
+            </div>
+            <button className="pin-button" type="button"><Pin size={16} /> Ghim <span>0</span></button>
+            <button className="members-button" type="button"><Users size={17} /> 259</button>
+          </div>
+        </section>
+
+        <section className="room-grid" aria-label="Danh sách người đang học">
+          {studyRooms.map((room, index) => (
+            <article className="study-room-card" key={room.name}>
+              <img src={room.image} alt={`${room.name} đang học ${room.subject}`} loading={index < 4 ? 'eager' : 'lazy'} />
+              <div className="room-shade" />
+              <button className="room-pin" type="button" aria-label={`Ghim phòng của ${room.name}`}><Pin size={16} /></button>
+              <span className="focus-score"><Sparkles size={13} /> {room.focusMinutes}</span>
+
+              <div className="room-owner">
+                <span className="room-owner-avatar">{room.initials}</span>
+                <div><strong>{room.name}</strong><span>{room.subject}</span></div>
+                <button type="button" aria-label={`Kết nối với ${room.name}`}><Link2 size={15} /></button>
+              </div>
+
+              <footer className="room-footer">
+                <p>{room.status}</p>
+                <div className="room-reactions">
+                  <span><Users size={14} /> {room.reactions}</span>
+                  <button type="button" aria-label="Gửi tin nhắn"><MessageCircle size={15} /></button>
+                  <button type="button" aria-label="Gửi biểu cảm"><Smile size={16} /></button>
+                </div>
+              </footer>
+            </article>
+          ))}
+        </section>
+
+        <button className="mobile-find-button" type="button"><Search size={18} /> Tìm bạn học</button>
+        <button className="mobile-create-room" type="button" aria-label="Tạo phòng học"><Plus size={22} /></button>
       </main>
     </div>
   )
