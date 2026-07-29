@@ -1,9 +1,9 @@
-export type PostContentType = 'BLOG'
+export type PostContentType = 'QUESTION' | 'DISCUSSION' | 'BLOG' | 'NOTE'
 
 export interface CreatePostRequest {
   title: string
   content: string
-  contentType: PostContentType
+  contentType: 'BLOG'
   tagNames: string[]
 }
 
@@ -39,4 +39,24 @@ export interface Post {
   bookmarkedByCurrentUser: boolean
   createdAt: string
   updatedAt: string
+}
+
+export interface PageMetadata {
+  size: number
+  number: number
+  totalElements: number
+  totalPages: number
+}
+
+export interface PostPage {
+  content: Post[]
+  page: PageMetadata
+}
+
+export interface ListPostsParams {
+  tag?: string
+  keyword?: string
+  contentType?: PostContentType
+  page: number
+  size: number
 }
