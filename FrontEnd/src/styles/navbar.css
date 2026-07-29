@@ -4,7 +4,7 @@
   top: 0;
   height: 58px;
   background: rgba(255, 255, 255, 0.96);
-  border-bottom: 1px solid #e7ebf3;
+  border-bottom: 1px solid var(--color-border);
   backdrop-filter: blur(14px);
 }
 
@@ -21,7 +21,7 @@
   width: 36px;
   align-items: center;
   gap: 10px;
-  color: #1e293b;
+  color: var(--color-text-primary);
   text-decoration: none;
 }
 
@@ -37,14 +37,14 @@
   position: absolute;
   width: 13px;
   height: 25px;
-  background: #4f46e5;
+  background: var(--color-primary);
   border-radius: 5px;
 }
 
 .study-brand i:first-child {
   top: 0;
   left: 0;
-  background: #38bdf8;
+  background: var(--color-accent);
 }
 
 .study-brand i:last-child {
@@ -71,8 +71,8 @@
 .finish-session-button {
   min-height: 38px;
   padding: 0 16px;
-  color: #ffffff;
-  background: #4389f7;
+  color: var(--color-white);
+  background: var(--color-primary);
   border: 0;
   box-shadow: 0 6px 15px rgba(67, 137, 247, 0.2);
 }
@@ -88,9 +88,9 @@
   min-height: 38px;
   gap: 8px;
   padding: 0 14px;
-  color: #334155;
-  background: #ffffff;
-  border: 1px solid #dde5ef;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 .start-focus-button > span {
@@ -104,7 +104,7 @@
 }
 
 .start-focus-button small {
-  color: #64748b;
+  color: var(--color-text-secondary);
   font-size: 9px;
   text-align: center;
 }
@@ -114,13 +114,13 @@
   min-height: 38px;
   gap: 6px;
   padding: 0 10px;
-  color: #3b82f6;
-  background: #f8fbff;
-  border: 1px solid #dde5ef;
+  color: var(--color-info);
+  background: var(--color-info-soft);
+  border: 1px solid var(--color-border);
 }
 
 .timer-button span {
-  color: #475569;
+  color: var(--color-text-secondary);
   font-size: 12px;
 }
 
@@ -139,7 +139,7 @@
 .user-menu summary {
   gap: 8px;
   padding: 4px 6px 4px 4px;
-  color: #475569;
+  color: var(--color-text-secondary);
   list-style: none;
   border-radius: 12px;
   cursor: pointer;
@@ -150,7 +150,7 @@
 }
 
 .user-menu summary:hover {
-  background: #f1f5f9;
+  background: var(--color-background);
 }
 
 .user-menu[open] summary > svg {
@@ -163,8 +163,8 @@
   height: 32px;
   flex: 0 0 auto;
   place-items: center;
-  color: #ffffff;
-  background: linear-gradient(135deg, #7c3aed, #38bdf8);
+  color: var(--color-white);
+  background: var(--gradient-brand);
   border-radius: 50%;
   font-size: 10px;
   font-weight: 800;
@@ -178,7 +178,7 @@
 .user-name {
   max-width: 112px;
   overflow: hidden;
-  color: #334155;
+  color: var(--color-text-secondary);
   font-size: 13px;
   font-weight: 700;
   text-overflow: ellipsis;
@@ -191,8 +191,8 @@
   right: 0;
   width: 254px;
   padding: 8px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(15, 23, 42, 0.14);
 }
@@ -200,7 +200,7 @@
 .user-menu-header {
   gap: 12px;
   padding: 12px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .user-menu-header > span:last-child {
@@ -217,12 +217,12 @@
 }
 
 .user-menu-header strong {
-  color: #0f172a;
+  color: var(--color-text-primary);
   font-size: 14px;
 }
 
 .user-menu-header small {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 12px;
 }
 
@@ -237,7 +237,7 @@
   width: 100%;
   gap: 10px;
   padding: 10px 12px;
-  color: #475569;
+  color: var(--color-text-secondary);
   background: transparent;
   border: 0;
   border-radius: 10px;
@@ -250,8 +250,8 @@
 
 .user-menu-links a:hover,
 .user-menu-links button:hover {
-  color: #4f46e5;
-  background: #eef2ff;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
 }
 
 .user-menu-links button:last-child {

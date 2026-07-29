@@ -1,8 +1,34 @@
 :root {
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-soft: #eef2ff;
+  --color-primary-border: #c7d2fe;
+  --color-secondary: #7c3aed;
+  --color-accent: #06b6d4;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-success: #22c55e;
+  --color-success-soft: #f0fdf4;
+  --color-warning: #f59e0b;
+  --color-warning-soft: #fffbeb;
+  --color-error: #ef4444;
+  --color-error-soft: #fef2f2;
+  --color-info: #3b82f6;
+  --color-info-soft: #eff6ff;
+  --color-white: #ffffff;
+  --gradient-brand: linear-gradient(135deg, #4f46e5, #6366f1, #06b6d4);
+  --shadow-small: 0 2px 8px rgba(15, 23, 42, 0.05);
+  --shadow-medium: 0 8px 30px rgba(15, 23, 42, 0.08);
+  --shadow-large: 0 20px 60px rgba(15, 23, 42, 0.12);
+
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
-  color: #0f172a;
-  background: #f8fafc;
+  color: var(--color-text-primary);
+  background: var(--color-background);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -17,6 +43,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
+  color: var(--color-text-primary);
+  background: var(--color-background);
 }
 
 button,

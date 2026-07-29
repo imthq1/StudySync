@@ -1,6 +1,6 @@
 .study-app-shell {
   min-height: 100vh;
-  background: #f5f7fb;
+  background: var(--color-background);
 }
 
 .study-sidebar {
@@ -14,8 +14,8 @@
   flex-direction: column;
   align-items: center;
   padding: 12px 0;
-  background: #ffffff;
-  border-right: 1px solid #e7ebf3;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
 }
 
 .sidebar-profile {
@@ -23,8 +23,8 @@
   width: 38px;
   height: 42px;
   place-items: center;
-  color: #ffffff;
-  background: linear-gradient(145deg, #4f46e5, #38bdf8);
+  color: var(--color-white);
+  background: var(--gradient-brand);
   border-radius: 12px;
   box-shadow: 0 8px 18px rgba(79, 70, 229, 0.25);
 }
@@ -53,8 +53,8 @@
 
 .sidebar-links a:hover,
 .sidebar-links a.is-active {
-  color: #4f46e5;
-  background: #eef2ff;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
 }
 
 .sidebar-streak {
@@ -66,7 +66,7 @@
 }
 
 .sidebar-streak strong {
-  color: #4f46e5;
+  color: var(--color-primary);
   font-size: 12px;
 }
 
@@ -117,7 +117,7 @@
 .live-indicator {
   width: 9px;
   height: 9px;
-  background: #22c55e;
+  background: var(--color-success);
   border: 3px solid #dcfce7;
   border-radius: 50%;
   box-sizing: content-box;
@@ -150,8 +150,8 @@
 }
 
 .page-control button:hover {
-  color: #4f46e5;
-  background: #e9edff;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
 }
 
 .view-controls {
@@ -170,9 +170,9 @@
   justify-content: center;
   gap: 7px;
   padding: 0 13px;
-  color: #475569;
-  background: #ffffff;
-  border: 1px solid #e1e7f0;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
   font-size: 12px;
   font-weight: 700;
@@ -181,8 +181,8 @@
 
 .view-switch {
   padding: 3px;
-  background: #ffffff;
-  border: 1px solid #e1e7f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
 }
 
@@ -195,8 +195,8 @@
 }
 
 .view-switch button.is-active {
-  color: #ffffff;
-  background: #4389f7;
+  color: var(--color-white);
+  background: var(--color-primary);
 }
 
 .pin-button span {
@@ -291,7 +291,7 @@
   height: 23px;
   place-items: center;
   color: #ffffff;
-  background: linear-gradient(135deg, #7c3aed, #38bdf8);
+  background: var(--gradient-brand);
   border-radius: 50%;
   font-size: 8px;
   font-weight: 800;
@@ -322,7 +322,7 @@
   width: 23px;
   height: 23px;
   color: #ffffff;
-  background: #3b82f6;
+  background: var(--color-info);
   border-radius: 50%;
 }
 
@@ -397,8 +397,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  color: #4f46e5;
-  background: #eef2ff;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
   border-radius: 12px;
   font-weight: 700;
   text-decoration: none;
