@@ -2,7 +2,10 @@ import type { ReactNode } from 'react'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import HomePage from '../pages/HomePage'
+import CreatePostPage from '../pages/CreatePostPage'
 import LoginPage from '../pages/LoginPage'
+import PostDetailPage from '../pages/PostDetailPage'
+import PostsPage from '../pages/PostsPage'
 import RegisterPage from '../pages/RegisterPage'
 import UserFeaturePage from '../pages/UserFeaturePage'
 
@@ -50,6 +53,9 @@ function App() {
       <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
       <Route path="/login" element={<PublicOnlyRoute><LoginRoute /></PublicOnlyRoute>} />
       <Route path="/register" element={<PublicOnlyRoute><RegisterRoute /></PublicOnlyRoute>} />
+      <Route path="/posts" element={<ProtectedRoute><PostsPage /></ProtectedRoute>} />
+      <Route path="/posts/new" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
+      <Route path="/posts/:postId" element={<ProtectedRoute><PostDetailPage /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><UserFeaturePage title="Hồ sơ cá nhân" /></ProtectedRoute>} />
       <Route path="/saved-posts" element={<ProtectedRoute><UserFeaturePage title="Bài viết đã lưu" /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><UserFeaturePage title="Cài đặt" /></ProtectedRoute>} />
