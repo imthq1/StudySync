@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { clearAuthSession, getAuthSession, saveAuthSession } from '../services/auth.service'
+import { clearAuthSession, getAuthSession, saveAuthSession } from '../services/auth-session'
 import type { LoginResult } from '../types/auth'
 import { AuthContext } from './auth-context'
 
