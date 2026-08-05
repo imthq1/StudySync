@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getAuthSession } from './auth-session'
+import { expireAuthSession, getAuthSession, isAccessTokenExpired } from './auth-session'
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8080',
@@ -17,6 +17,25 @@ apiClient.interceptors.request.use((config) => {
 
   return config
 })
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error: unknown) => {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status
+      const accessToken = getAuthSession()?.access_token
+      const isExpiredTokenResponse = status === 403 && accessToken
+        ? isAccessTokenExpired(accessToken)
+        : false
+
+      if (status === 401 || isExpiredTokenResponse) {
+        expireAuthSession()
+      }
+    }
+
+    return Promise.reject(error)
+  },
+)
 
 export function getApiErrorMessage(error: unknown, fallback: string) {
   if (axios.isAxiosError<{ message?: string }>(error)) {
