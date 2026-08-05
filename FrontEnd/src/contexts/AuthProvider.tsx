@@ -1,5 +1,10 @@
-import { useState, type ReactNode } from 'react'
-import { clearAuthSession, getAuthSession, saveAuthSession } from '../services/auth-session'
+import { useEffect, useState, type ReactNode } from 'react'
+import {
+  AUTH_EXPIRED_EVENT,
+  clearAuthSession,
+  getAuthSession,
+  saveAuthSession,
+} from '../services/auth-session'
 import type { LoginResult } from '../types/auth'
 import { AuthContext } from './auth-context'
 
@@ -9,6 +14,16 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<LoginResult | null>(getAuthSession)
+
+  useEffect(() => {
+    function handleExpiredSession() {
+      clearAuthSession()
+      setSession(null)
+    }
+
+    window.addEventListener(AUTH_EXPIRED_EVENT, handleExpiredSession)
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handleExpiredSession)
+  }, [])
 
   function signIn(nextSession: LoginResult) {
     saveAuthSession(nextSession)
