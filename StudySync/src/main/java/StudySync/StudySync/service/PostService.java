@@ -87,14 +87,6 @@ public class PostService {
 
     @Transactional
     public PostResponse create(CreatePostRequest request) {
-        if (request.getContentType() == ContentType.FILE) {
-            throw new BadRequestException("Use file upload endpoint for FILE content type");
-        }
-        if (request.getContentType() != ContentType.FILE
-                && (request.getContent() == null || request.getContent().isBlank())) {
-            throw new BadRequestException("Content is required for blog and note");
-        }
-
         Long userId = securityUtil.getCurrentUserIdOrThrow();
         User author = userService.getUserOrThrow(userId);
 
@@ -122,17 +114,10 @@ public class PostService {
         if (request.getTitle() != null) {
             post.setTitle(request.getTitle());
         }
-        if (request.getContent() != null) {
-            if (post.getContentType() == ContentType.FILE) {
-                throw new BadRequestException("Content cannot be updated for file posts");
-            }
-            post.setContent(request.getContent());
-        }
         if (request.getTagNames() != null) {
             post.getTags().clear();
             post.getTags().addAll(tagService.resolveTags(request.getTagNames()));
         }
-
         return toResponse(postRepository.save(post));
     }
 
