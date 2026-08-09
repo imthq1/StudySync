@@ -27,8 +27,6 @@ import { getTags } from "../services/tags.service";
 import type { PageMetadata, PostContentType, Tag } from "../types/post";
 import "../styles/posts.css";
 
-type ContentFilter = "all" | PostContentType;
-
 const PAGE_SIZE = 8;
 
 const roomItems = [
@@ -121,7 +119,6 @@ function formatPostDate(value: string) {
 }
 
 function PostsPage() {
-  const [activeFilter, setActiveFilter] = useState<ContentFilter>("all");
   const [activeTag, setActiveTag] = useState("");
   const [keyword, setKeyword] = useState("");
   const deferredKeyword = useDeferredValue(keyword.trim());
@@ -163,7 +160,7 @@ function PostsPage() {
           {
             tag: activeTag || undefined,
             keyword: deferredKeyword || undefined,
-            contentType: activeFilter === "all" ? undefined : activeFilter,
+            contentType: undefined,
             page: pageNumber,
             size: PAGE_SIZE,
           },
@@ -189,12 +186,7 @@ function PostsPage() {
 
     loadPosts();
     return () => controller.abort();
-  }, [activeFilter, activeTag, deferredKeyword, pageNumber]);
-
-  function changeFilter(filter: ContentFilter) {
-    setActiveFilter(filter);
-    setPageNumber(0);
-  }
+  }, [activeTag, deferredKeyword, pageNumber]);
 
   function changeTag(tagName: string) {
     setActiveTag(tagName);
