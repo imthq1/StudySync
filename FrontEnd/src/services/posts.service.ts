@@ -33,6 +33,10 @@ export function getMyPosts(page: number, size: number, signal?: AbortSignal) {
   return getPersonalPosts('/api/v1/posts/me', page, size, signal)
 }
 
+export function getUserPosts(userId: number, page: number, size: number, signal?: AbortSignal) {
+  return getPersonalPosts(`/api/v1/posts/user/${userId}`, page, size, signal)
+}
+
 export function getLikedPosts(page: number, size: number, signal?: AbortSignal) {
   return getPersonalPosts('/api/v1/posts/liked', page, size, signal)
 }
