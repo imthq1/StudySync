@@ -14,6 +14,12 @@ import {
   getComments,
   updateComment as updateCommentRequest,
 } from '../services/comments.service'
+import {
+  bookmarkPost,
+  likePost,
+  removePostBookmark,
+  unlikePost,
+} from '../services/interactions.service'
 import { getPostById } from '../services/posts.service'
 import type { Comment } from '../types/comment'
 import type { Post } from '../types/post'
@@ -85,6 +91,9 @@ function PostDetailPage() {
   const [commentContent, setCommentContent] = useState('')
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
   const [commentFormError, setCommentFormError] = useState('')
+  const [isUpdatingLike, setIsUpdatingLike] = useState(false)
+  const [isUpdatingBookmark, setIsUpdatingBookmark] = useState(false)
+  const [interactionErrorMessage, setInteractionErrorMessage] = useState('')
 
   useEffect(() => {
     const controller = new AbortController()
@@ -191,6 +200,65 @@ function PostDetailPage() {
       : currentPost)
   }
 
+  async function handleToggleLike() {
+    if (!post || isUpdatingLike) {
+      return
+    }
+
+    const wasLiked = post.likedByCurrentUser
+    const previousLikeCount = post.likeCount
+
+    setInteractionErrorMessage('')
+    setIsUpdatingLike(true)
+    setPost({
+      ...post,
+      likedByCurrentUser: !wasLiked,
+      likeCount: Math.max(0, previousLikeCount + (wasLiked ? -1 : 1)),
+    })
+
+    try {
+      if (wasLiked) {
+        await unlikePost(post.id)
+      } else {
+        await likePost(post.id)
+      }
+    } catch (error) {
+      setPost((currentPost) => currentPost
+        ? { ...currentPost, likedByCurrentUser: wasLiked, likeCount: previousLikeCount }
+        : currentPost)
+      setInteractionErrorMessage(getApiErrorMessage(error, 'Không thể cập nhật lượt thích.'))
+    } finally {
+      setIsUpdatingLike(false)
+    }
+  }
+
+  async function handleToggleBookmark() {
+    if (!post || isUpdatingBookmark) {
+      return
+    }
+
+    const wasBookmarked = post.bookmarkedByCurrentUser
+
+    setInteractionErrorMessage('')
+    setIsUpdatingBookmark(true)
+    setPost({ ...post, bookmarkedByCurrentUser: !wasBookmarked })
+
+    try {
+      if (wasBookmarked) {
+        await removePostBookmark(post.id)
+      } else {
+        await bookmarkPost(post.id)
+      }
+    } catch (error) {
+      setPost((currentPost) => currentPost
+        ? { ...currentPost, bookmarkedByCurrentUser: wasBookmarked }
+        : currentPost)
+      setInteractionErrorMessage(getApiErrorMessage(error, 'Không thể cập nhật bài viết đã lưu.'))
+    } finally {
+      setIsUpdatingBookmark(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="editor-app-shell">
@@ -264,10 +332,29 @@ function PostDetailPage() {
           )}
 
           <footer className="post-detail-footer">
-            <span><Heart size={17} fill={post.likedByCurrentUser ? 'currentColor' : 'none'} /> {post.likeCount} lượt thích</span>
+            <button
+              className={post.likedByCurrentUser ? 'is-active' : ''}
+              type="button"
+              onClick={handleToggleLike}
+              disabled={isUpdatingLike}
+              aria-pressed={post.likedByCurrentUser}
+            >
+              <Heart size={17} fill={post.likedByCurrentUser ? 'currentColor' : 'none'} />
+              {post.likeCount} lượt thích
+            </button>
             <span><MessageCircle size={17} /> {post.commentCount} bình luận</span>
-            <span><Bookmark size={17} fill={post.bookmarkedByCurrentUser ? 'currentColor' : 'none'} /> {post.bookmarkedByCurrentUser ? 'Đã lưu' : 'Lưu bài'}</span>
+            <button
+              className={post.bookmarkedByCurrentUser ? 'is-active' : ''}
+              type="button"
+              onClick={handleToggleBookmark}
+              disabled={isUpdatingBookmark}
+              aria-pressed={post.bookmarkedByCurrentUser}
+            >
+              <Bookmark size={17} fill={post.bookmarkedByCurrentUser ? 'currentColor' : 'none'} />
+              {post.bookmarkedByCurrentUser ? 'Đã lưu' : 'Lưu bài'}
+            </button>
           </footer>
+          {interactionErrorMessage && <div className="post-interaction-error" role="alert">{interactionErrorMessage}</div>}
         </article>
 
         <section className="comments-section" aria-labelledby="comments-title">

@@ -1,6 +1,7 @@
 import { useDeferredValue, useEffect, useState } from "react";
 import {
   ArrowRight,
+  Bookmark,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -22,9 +23,15 @@ import { Link } from "react-router-dom";
 import AppNavbar from "../components/layout/AppNavbar";
 import StudySidebar from "../components/layout/StudySidebar";
 import { getApiErrorMessage } from "../services/api-client";
+import {
+  bookmarkPost,
+  likePost,
+  removePostBookmark,
+  unlikePost,
+} from "../services/interactions.service";
 import { getPosts } from "../services/posts.service";
 import { getTags } from "../services/tags.service";
-import type { PageMetadata, PostContentType, Tag } from "../types/post";
+import type { PageMetadata, Post, PostContentType, Tag } from "../types/post";
 import "../styles/posts.css";
 
 const PAGE_SIZE = 8;
@@ -130,6 +137,8 @@ function PostsPage() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [pendingInteraction, setPendingInteraction] = useState<string | null>(null);
+  const [interactionErrorMessage, setInteractionErrorMessage] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -193,6 +202,85 @@ function PostsPage() {
     setPageNumber(0);
   }
 
+  function updatePost(postId: number, updater: (post: Post) => Post) {
+    setPosts((currentPosts) => currentPosts.map((post) => (
+      post.id === postId ? updater(post) : post
+    )));
+  }
+
+  async function handleToggleLike(post: Post) {
+    const interactionKey = `like-${post.id}`;
+
+    if (pendingInteraction) {
+      return;
+    }
+
+    const wasLiked = post.likedByCurrentUser;
+    const previousLikeCount = post.likeCount;
+
+    setPendingInteraction(interactionKey);
+    setInteractionErrorMessage("");
+    updatePost(post.id, (currentPost) => ({
+      ...currentPost,
+      likedByCurrentUser: !wasLiked,
+      likeCount: Math.max(0, previousLikeCount + (wasLiked ? -1 : 1)),
+    }));
+
+    try {
+      if (wasLiked) {
+        await unlikePost(post.id);
+      } else {
+        await likePost(post.id);
+      }
+    } catch (error) {
+      updatePost(post.id, (currentPost) => ({
+        ...currentPost,
+        likedByCurrentUser: wasLiked,
+        likeCount: previousLikeCount,
+      }));
+      setInteractionErrorMessage(
+        getApiErrorMessage(error, "Không thể cập nhật lượt thích."),
+      );
+    } finally {
+      setPendingInteraction(null);
+    }
+  }
+
+  async function handleToggleBookmark(post: Post) {
+    const interactionKey = `bookmark-${post.id}`;
+
+    if (pendingInteraction) {
+      return;
+    }
+
+    const wasBookmarked = post.bookmarkedByCurrentUser;
+
+    setPendingInteraction(interactionKey);
+    setInteractionErrorMessage("");
+    updatePost(post.id, (currentPost) => ({
+      ...currentPost,
+      bookmarkedByCurrentUser: !wasBookmarked,
+    }));
+
+    try {
+      if (wasBookmarked) {
+        await removePostBookmark(post.id);
+      } else {
+        await bookmarkPost(post.id);
+      }
+    } catch (error) {
+      updatePost(post.id, (currentPost) => ({
+        ...currentPost,
+        bookmarkedByCurrentUser: wasBookmarked,
+      }));
+      setInteractionErrorMessage(
+        getApiErrorMessage(error, "Không thể cập nhật bài viết đã lưu."),
+      );
+    } finally {
+      setPendingInteraction(null);
+    }
+  }
+
   const visiblePages = getVisiblePages(page.number, page.totalPages);
 
   return (
@@ -245,6 +333,10 @@ function PostsPage() {
                 </button>
               ))}
             </div>
+
+            {interactionErrorMessage && (
+              <div className="posts-interaction-error" role="alert">{interactionErrorMessage}</div>
+            )}
 
             <div className="knowledge-list" aria-live="polite">
               {isLoading &&
@@ -307,12 +399,29 @@ function PostsPage() {
                         </p>
                       </div>
                       <div className="knowledge-stats">
-                        <span>
-                          <Heart size={13} /> {post.likeCount}
-                        </span>
+                        <button
+                          className={post.likedByCurrentUser ? "is-active" : ""}
+                          type="button"
+                          onClick={() => handleToggleLike(post)}
+                          disabled={pendingInteraction === `like-${post.id}`}
+                          aria-label={post.likedByCurrentUser ? "Bỏ thích bài viết" : "Thích bài viết"}
+                          aria-pressed={post.likedByCurrentUser}
+                        >
+                          <Heart size={13} fill={post.likedByCurrentUser ? "currentColor" : "none"} /> {post.likeCount}
+                        </button>
                         <span>
                           <MessageCircle size={13} /> {post.commentCount}
                         </span>
+                        <button
+                          className={post.bookmarkedByCurrentUser ? "is-active" : ""}
+                          type="button"
+                          onClick={() => handleToggleBookmark(post)}
+                          disabled={pendingInteraction === `bookmark-${post.id}`}
+                          aria-label={post.bookmarkedByCurrentUser ? "Bỏ lưu bài viết" : "Lưu bài viết"}
+                          aria-pressed={post.bookmarkedByCurrentUser}
+                        >
+                          <Bookmark size={13} fill={post.bookmarkedByCurrentUser ? "currentColor" : "none"} />
+                        </button>
                       </div>
                     </article>
                   );

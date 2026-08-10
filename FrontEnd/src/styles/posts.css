@@ -311,10 +311,47 @@
   font-size: 10px;
 }
 
-.knowledge-stats span {
+.knowledge-stats span,
+.knowledge-stats button {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+.knowledge-stats button {
+  padding: 4px 5px;
+  margin: -4px -5px;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.knowledge-stats button:last-child {
+  margin-left: 2px;
+}
+
+.knowledge-stats button:hover:not(:disabled),
+.knowledge-stats button.is-active {
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.knowledge-stats button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.posts-interaction-error {
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  color: #b91c1c;
+  background: var(--color-error-soft);
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  font-size: 10px;
 }
 
 .knowledge-card-skeleton {
