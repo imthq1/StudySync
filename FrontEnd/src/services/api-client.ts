@@ -9,6 +9,14 @@ const apiClient = axios.create({
 })
 
 apiClient.interceptors.request.use((config) => {
+  const isPublicAuthRequest = config.url === '/api/v1/auth/login'
+    || config.url === '/api/v1/auth/register'
+
+  if (isPublicAuthRequest) {
+    delete config.headers.Authorization
+    return config
+  }
+
   const accessToken = getAuthSession()?.access_token
 
   if (accessToken) {

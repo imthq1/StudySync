@@ -16,5 +16,5 @@ export async function login(credentials: LoginCredentials): Promise<LoginResult>
 }
 
 export async function register(credentials: RegisterCredentials) {
-  await apiClient.post<ApiResponse<unknown>>('/api/v1/auth/regiser', credentials)
+  await apiClient.post<ApiResponse<unknown>>('/api/v1/auth/register', credentials)
 }
