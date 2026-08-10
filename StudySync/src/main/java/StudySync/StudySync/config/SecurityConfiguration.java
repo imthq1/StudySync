@@ -48,6 +48,8 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(whiteList).permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/study-rooms", "/api/v1/study-rooms/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/*/profile").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/follows/*/followers").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/follows/*/following").permitAll()

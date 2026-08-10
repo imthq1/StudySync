@@ -8,6 +8,8 @@ import PostDetailPage from '../pages/PostDetailPage'
 import PostsPage from '../pages/PostsPage'
 import RegisterPage from '../pages/RegisterPage'
 import UserFeaturePage from '../pages/UserFeaturePage'
+import StudyRoomPage from '../pages/StudyRoomPage'
+import StudyRoomsPage from '../pages/StudyRoomsPage'
 
 function LoginRoute() {
   const navigate = useNavigate()
@@ -56,6 +58,8 @@ function App() {
       <Route path="/posts" element={<ProtectedRoute><PostsPage /></ProtectedRoute>} />
       <Route path="/posts/new" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
       <Route path="/posts/:postId" element={<ProtectedRoute><PostDetailPage /></ProtectedRoute>} />
+      <Route path="/study-rooms" element={<ProtectedRoute><StudyRoomsPage /></ProtectedRoute>} />
+      <Route path="/study-rooms/:roomId" element={<ProtectedRoute><StudyRoomPage /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><UserFeaturePage title="Hồ sơ cá nhân" /></ProtectedRoute>} />
       <Route path="/saved-posts" element={<ProtectedRoute><UserFeaturePage title="Bài viết đã lưu" /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><UserFeaturePage title="Cài đặt" /></ProtectedRoute>} />

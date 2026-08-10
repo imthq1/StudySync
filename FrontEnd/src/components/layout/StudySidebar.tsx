@@ -14,7 +14,7 @@ const sidebarItems = [
   { label: "Trang chủ", icon: Home, href: "/" },
   { label: "Hồ sơ", icon: UserRound, href: "/profile" },
   { label: "Tin nhắn", icon: MessageCircle, href: "/#messages" },
-  { label: "Phòng học", icon: UsersRound, href: "/#rooms" },
+  { label: "Phòng học", icon: UsersRound, href: "/study-rooms" },
   { label: "Kho kiến thức", icon: Library, href: "/posts" },
   { label: "Thống kê", icon: BarChart3, href: "/#stats" },
   { label: "Cài đặt", icon: Settings2, href: "/settings" },
@@ -28,7 +28,7 @@ function StudySidebar() {
       <div className="sidebar-links">
         {sidebarItems.map(({ label, icon: Icon, href }) => (
           <Link
-            className={location.pathname === href ? "is-active" : ""}
+            className={location.pathname === href || (href === "/study-rooms" && location.pathname.startsWith("/study-rooms/")) ? "is-active" : ""}
             to={href}
             key={label}
             aria-label={label}
