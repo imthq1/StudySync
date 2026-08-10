@@ -16,6 +16,7 @@ import {
   WifiOff,
 } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import timerCompleteSoundUrl from '../assets/universfield-new-notification-039-493472.mp3'
 import AppNavbar from '../components/layout/AppNavbar'
 import StudySidebar from '../components/layout/StudySidebar'
 import { getApiErrorMessage } from '../services/api-client'
@@ -37,6 +38,12 @@ import type {
 import '../styles/study-rooms.css'
 
 type ConnectionStatus = 'connecting' | 'connected' | 'disconnected'
+
+type TimerSnapshot = {
+  mode: StudyRoom['timerMode']
+  remainingSeconds: number
+  status: StudyRoom['timerStatus']
+}
 
 function getInitials(name: string | null) {
   return (name || 'U').split(' ').filter(Boolean).slice(-2).map((part) => part[0]).join('').toUpperCase()
@@ -67,6 +74,8 @@ function StudyRoomPage() {
   const currentUserId = getAuthSession()?.user.id
   const clientRef = useRef<Client | null>(null)
   const chatEndRef = useRef<HTMLDivElement | null>(null)
+  const timerAudioRef = useRef<HTMLAudioElement | null>(null)
+  const previousTimerRef = useRef<TimerSnapshot | null>(null)
   const [room, setRoom] = useState<StudyRoom | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
@@ -74,6 +83,17 @@ function StudyRoomPage() {
   const [messageDraft, setMessageDraft] = useState('')
   const [now, setNow] = useState(Date.now())
   const [isActionPending, setIsActionPending] = useState(false)
+
+  useEffect(() => {
+    const audio = new Audio(timerCompleteSoundUrl)
+    audio.preload = 'auto'
+    timerAudioRef.current = audio
+
+    return () => {
+      audio.pause()
+      timerAudioRef.current = null
+    }
+  }, [])
 
   useEffect(() => {
     if (!Number.isInteger(roomId) || roomId <= 0) {
@@ -172,6 +192,33 @@ function StudyRoomPage() {
     const timer = window.setInterval(() => setNow(Date.now()), 500)
     return () => window.clearInterval(timer)
   }, [room?.timerStatus, room?.timerEndsAt])
+
+  useEffect(() => {
+    if (!room) {
+      previousTimerRef.current = null
+      return
+    }
+
+    const endTime = room.timerEndsAt ? new Date(room.timerEndsAt).getTime() : Number.NaN
+    const remainingSeconds = room.timerStatus === 'RUNNING' && Number.isFinite(endTime)
+      ? Math.max(0, (endTime - now) / 1000)
+      : Math.max(0, room.timerRemainingSeconds)
+    const previousTimer = previousTimerRef.current
+
+    previousTimerRef.current = { mode: room.timerMode, remainingSeconds, status: room.timerStatus }
+
+    if (previousTimer?.status === 'RUNNING' && previousTimer.remainingSeconds > 0 && remainingSeconds === 0) {
+      const audio = timerAudioRef.current
+      if (audio) {
+        audio.currentTime = 0
+        void audio.play().catch(() => undefined)
+      }
+
+      if (room.isOwner && room.status !== 'CLOSED' && previousTimer.mode === 'FOCUS') {
+        publish(`/app/study-rooms/${roomId}/timer`, { action: 'START_BREAK' satisfies TimerAction })
+      }
+    }
+  }, [now, room, roomId])
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
