@@ -7,6 +7,11 @@ export async function getMyProfile(signal?: AbortSignal): Promise<UserProfile> {
   return response.data.data
 }
 
+export async function getUserProfile(userId: number, signal?: AbortSignal): Promise<UserProfile> {
+  const response = await apiClient.get<ApiResponse<UserProfile>>(`/api/v1/users/${userId}/profile`, { signal })
+  return response.data.data
+}
+
 export async function getMyContributions(
   from: string,
   to: string,

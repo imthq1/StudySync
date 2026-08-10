@@ -14,6 +14,7 @@ import {
 import { Link, useSearchParams } from 'react-router-dom'
 import AppNavbar from '../components/layout/AppNavbar'
 import StudySidebar from '../components/layout/StudySidebar'
+import FollowListModal from '../components/profile/FollowListModal'
 import { getApiErrorMessage } from '../services/api-client'
 import { getBookmarkedPosts, getLikedPosts, getMyPosts } from '../services/posts.service'
 import { getMyCommentActivity, getMyContributions, getMyProfile } from '../services/profile.service'
@@ -116,6 +117,7 @@ function ProfilePage() {
   const [isContentLoading, setIsContentLoading] = useState(true)
   const [profileError, setProfileError] = useState('')
   const [contentError, setContentError] = useState('')
+  const [followListKind, setFollowListKind] = useState<'followers' | 'following' | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -216,8 +218,8 @@ function ProfilePage() {
             <p>{user.bio || 'Chưa có phần giới thiệu cá nhân.'}</p>
           </section>
           <div className="profile-social-stats">
-            <span><strong>{profile.followerCount}</strong> người theo dõi</span>
-            <span><strong>{profile.followingCount}</strong> đang theo dõi</span>
+            <button type="button" onClick={() => setFollowListKind('followers')}><strong>{profile.followerCount}</strong> người theo dõi</button>
+            <button type="button" onClick={() => setFollowListKind('following')}><strong>{profile.followingCount}</strong> đang theo dõi</button>
           </div>
           <section className="profile-goals">
             <h2><Star size={15} /> Mục tiêu học tập</h2>
@@ -267,6 +269,7 @@ function ProfilePage() {
         </section>
       </div>
     </main>
+    {followListKind && <FollowListModal kind={followListKind} userId={user.id} onClose={() => setFollowListKind(null)} />}
   </div>
 }
 
