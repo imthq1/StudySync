@@ -19,6 +19,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import timerCompleteSoundUrl from '../assets/universfield-new-notification-039-493472.mp3'
 import AppNavbar from '../components/layout/AppNavbar'
 import StudySidebar from '../components/layout/StudySidebar'
+import RoomVideoGrid from '../components/study-rooms/RoomVideoGrid'
+import { useStudyRoomWebRtc } from '../hooks/useStudyRoomWebRtc'
 import { getApiErrorMessage } from '../services/api-client'
 import { getAuthSession } from '../services/auth-session'
 import {
@@ -83,6 +85,15 @@ function StudyRoomPage() {
   const [messageDraft, setMessageDraft] = useState('')
   const [now, setNow] = useState(Date.now())
   const [isActionPending, setIsActionPending] = useState(false)
+  const camera = useStudyRoomWebRtc({
+    currentUserId,
+    isConnected: connectionStatus === 'connected',
+    members: room?.members ?? [],
+    sendSignal: (signal) => publish(`/app/study-rooms/${roomId}/webrtc`, signal),
+  })
+  const handleWebRtcSignal = camera.handleSignal
+  const removeCameraMember = camera.removeMember
+  const shutdownCameraMedia = camera.shutdownMedia
 
   useEffect(() => {
     const audio = new Audio(timerCompleteSoundUrl)
@@ -137,6 +148,12 @@ function StudyRoomPage() {
       try {
         const event = JSON.parse(frame.body) as StudyRoomEvent
         if (event.roomId !== roomId) return
+        if (event.type === 'WEBRTC_SIGNAL') {
+          void handleWebRtcSignal(event.data)
+          return
+        }
+        if (event.type === 'MEMBER_LEFT') removeCameraMember(event.data.id)
+        if (event.type === 'ROOM_CLOSED') shutdownCameraMedia()
         setRoom((current) => {
           if (!current) return current
           switch (event.type) {
@@ -184,7 +201,7 @@ function StudyRoomPage() {
       if (clientRef.current === client) clientRef.current = null
       void client.deactivate()
     }
-  }, [room?.isMember, room?.status, roomId])
+  }, [handleWebRtcSignal, removeCameraMember, room?.isMember, room?.status, roomId, shutdownCameraMedia])
 
   useEffect(() => {
     if (room?.timerStatus !== 'RUNNING') return
@@ -223,6 +240,10 @@ function StudyRoomPage() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }, [room?.messages.length])
+
+  useEffect(() => {
+    if (room?.status === 'CLOSED') shutdownCameraMedia()
+  }, [room?.status, shutdownCameraMedia])
 
   function publish(destination: string, body: object) {
     const client = clientRef.current
@@ -285,6 +306,7 @@ function StudyRoomPage() {
     : Math.max(0, room.timerRemainingSeconds)
   const progress = configuredSeconds > 0 ? Math.min(1, Math.max(0, remainingSeconds / configuredSeconds)) : 0
   const isClosed = room.status === 'CLOSED'
+  const hasActiveVideo = Boolean(camera.localStream) || camera.cameraUserIds.length > 0
 
   return (
     <div className="study-app-shell">
@@ -305,21 +327,36 @@ function StudyRoomPage() {
         {errorMessage && <div className="rooms-alert room-page-alert" role="alert">{errorMessage}<button type="button" onClick={() => setErrorMessage('')}>Đóng</button></div>}
         {isClosed && <div className="room-closed-banner"><strong>Phòng đã đóng</strong><span>Phiên học đã kết thúc. Tin nhắn và điều khiển hiện đã bị khóa.</span></div>}
 
-        <div className="room-workspace">
-          <section className={`focus-stage focus-stage--${room.timerMode.toLowerCase()}`}>
+        <div className={`room-workspace${hasActiveVideo ? ' room-workspace--with-video' : ''}`}>
+          <section className={`focus-stage focus-stage--${room.timerMode.toLowerCase()}${hasActiveVideo ? ' focus-stage--with-video' : ''}`}>
             <div className="focus-stage-label">{room.timerMode === 'FOCUS' ? 'Deep focus' : 'Nghỉ phục hồi'}<span>{room.timerStatus === 'RUNNING' ? 'Đang chạy' : room.timerStatus === 'PAUSED' ? 'Tạm dừng' : 'Sẵn sàng'}</span></div>
-            <div className="pomodoro-dial" style={{ background: `conic-gradient(var(--room-accent) ${progress * 360}deg, rgba(255,255,255,.09) 0deg)` }}>
-              <div><small>{room.timerMode === 'FOCUS' ? 'TẬP TRUNG' : 'NGHỈ NGƠI'}</small><strong>{formatClock(remainingSeconds)}</strong><span>Chu kỳ {room.focusDurationMinutes} / {room.breakDurationMinutes}</span></div>
-            </div>
-            {room.isOwner ? (
-              <div className="timer-controls" aria-label="Điều khiển Pomodoro">
-                <button type="button" onClick={() => handleTimer('START_FOCUS')} disabled={isClosed}><Play size={17} fill="currentColor" /> Focus</button>
-                <button type="button" onClick={() => handleTimer('START_BREAK')} disabled={isClosed}><Coffee size={17} /> Break</button>
-                <button type="button" onClick={() => handleTimer('PAUSE')} disabled={isClosed || room.timerStatus !== 'RUNNING'}><Pause size={17} /> Dừng</button>
-                <button type="button" onClick={() => handleTimer('RESET')} disabled={isClosed}><RotateCcw size={17} /> Reset</button>
+            <RoomVideoGrid
+              cameraError={camera.cameraError}
+              cameraStatus={camera.cameraStatus}
+              cameraUserIds={camera.cameraUserIds}
+              currentUserId={currentUserId}
+              disabled={isClosed || connectionStatus !== 'connected'}
+              localStream={camera.localStream}
+              members={room.members}
+              remoteStreams={camera.remoteStreams}
+              onToggleCamera={camera.toggleCamera}
+            />
+            <div className="focus-timer-panel">
+              <div className="pomodoro-dial" style={{ background: `conic-gradient(var(--room-accent) ${progress * 360}deg, rgba(255,255,255,.09) 0deg)` }}>
+                <div><small>{room.timerMode === 'FOCUS' ? 'TẬP TRUNG' : 'NGHỈ NGƠI'}</small><strong>{formatClock(remainingSeconds)}</strong><span>Chu kỳ {room.focusDurationMinutes} / {room.breakDurationMinutes}</span></div>
               </div>
-            ) : <p className="timer-follow-note"><ShieldCheck size={16} /> Pomodoro được điều khiển bởi chủ phòng</p>}
-            {room.description && <p className="focus-room-description">{room.description}</p>}
+              <div className="focus-timer-actions">
+                {room.isOwner ? (
+                  <div className="timer-controls" aria-label="Điều khiển Pomodoro">
+                    <button type="button" onClick={() => handleTimer('START_FOCUS')} disabled={isClosed}><Play size={17} fill="currentColor" /> Focus</button>
+                    <button type="button" onClick={() => handleTimer('START_BREAK')} disabled={isClosed}><Coffee size={17} /> Break</button>
+                    <button type="button" onClick={() => handleTimer('PAUSE')} disabled={isClosed || room.timerStatus !== 'RUNNING'}><Pause size={17} /> Dừng</button>
+                    <button type="button" onClick={() => handleTimer('RESET')} disabled={isClosed}><RotateCcw size={17} /> Reset</button>
+                  </div>
+                ) : <p className="timer-follow-note"><ShieldCheck size={16} /> Pomodoro được điều khiển bởi chủ phòng</p>}
+                {room.description && <p className="focus-room-description">{room.description}</p>}
+              </div>
+            </div>
           </section>
 
           <aside className="room-members-panel">

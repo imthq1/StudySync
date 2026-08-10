@@ -397,6 +397,14 @@
   padding: 13px 18px 0;
 }
 
+.room-workspace--with-video {
+  grid-template-columns: minmax(620px, 2fr) minmax(300px, .68fr);
+  grid-template-rows: minmax(0, 1fr) minmax(245px, .72fr);
+}
+.room-workspace--with-video .focus-stage { grid-column: 1; grid-row: 1 / -1; }
+.room-workspace--with-video .room-members-panel { grid-column: 2; grid-row: 1; min-height: 0; }
+.room-workspace--with-video .room-chat-panel { grid-column: 2; grid-row: 2; min-height: 0; }
+
 .focus-stage,
 .room-members-panel,
 .room-chat-panel {
@@ -432,6 +440,44 @@
 .focus-stage--break { --room-accent: #2dd4bf; background: radial-gradient(circle at 50% 40%, rgba(45, 212, 191, .22), transparent 35%), linear-gradient(145deg, #0e2027, #15343a); }
 .focus-stage-label { position: absolute; top: 24px; left: 27px; color: #c7d2fe; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
 .focus-stage-label span { margin-left: 9px; padding: 5px 8px; color: #d1fae5; background: rgba(52, 211, 153, .13); border-radius: 999px; font-size: 9px; }
+
+.room-camera { width: min(100%, 620px); margin-bottom: 20px; }
+.room-camera-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.room-camera-toolbar > span { display: inline-flex; align-items: center; gap: 7px; color: #aeb7d1; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.room-camera-toolbar > span small { padding: 4px 7px; color: #c7d2fe; background: rgba(99,102,241,.16); border-radius: 999px; font-size: 8px; letter-spacing: 0; }
+.camera-toggle { display: inline-flex; min-height: 34px; align-items: center; gap: 7px; padding: 0 11px; color: #dbe2f5; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); border-radius: 9px; font-size: 10px; font-weight: 800; cursor: pointer; }
+.camera-toggle:hover { background: rgba(255,255,255,.13); }
+.camera-toggle--active { color: #fecaca; background: rgba(239,68,68,.12); border-color: rgba(248,113,113,.22); }
+.camera-toggle:disabled { opacity: .45; cursor: not-allowed; }
+.camera-spinner { animation: room-spin .8s linear infinite; }
+.room-camera-error { margin: 9px 0 0; padding: 8px 10px; color: #fecaca; background: rgba(127,29,29,.34); border: 1px solid rgba(248,113,113,.2); border-radius: 8px; font-size: 10px; line-height: 1.45; }
+.room-video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; max-height: 240px; overflow-y: auto; margin-top: 10px; padding-right: 2px; scrollbar-width: thin; }
+.room-video-grid--medium { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.room-video-grid--dense { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.room-video-tile { position: relative; min-height: 94px; overflow: hidden; background: #080b18; border: 1px solid rgba(255,255,255,.1); border-radius: 11px; aspect-ratio: 16 / 10; }
+.room-video-tile video { width: 100%; height: 100%; object-fit: cover; }
+.room-video-tile--local video { transform: scaleX(-1); }
+.room-video-tile > span { position: absolute; right: 7px; bottom: 7px; left: 7px; overflow: hidden; padding: 5px 7px; color: white; background: linear-gradient(90deg, rgba(4,7,18,.8), rgba(4,7,18,.18)); border-radius: 6px; font-size: 9px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+.room-video-waiting { display: grid; height: 100%; place-content: center; justify-items: center; gap: 7px; color: #8994b1; }
+.room-video-waiting small { font-size: 9px; }
+.focus-stage--with-video { display: grid; grid-template-rows: minmax(0, 1fr) auto; align-items: stretch; justify-content: stretch; gap: 12px; overflow: hidden; padding: 66px 18px 18px; }
+.focus-stage--with-video .room-camera { display: flex; width: 100%; height: 100%; min-height: 0; flex-direction: column; margin: 0; }
+.focus-stage--with-video .room-video-grid { min-height: 0; max-height: none; flex: 1; grid-auto-rows: minmax(0, 1fr); }
+.focus-stage--with-video .room-video-tile { min-height: 0; aspect-ratio: auto; }
+.focus-stage--with-video .focus-timer-panel { display: grid; width: 100%; grid-template-columns: 108px minmax(0, 1fr); gap: 15px; padding: 10px; background: rgba(7,10,28,.62); border: 1px solid rgba(255,255,255,.08); border-radius: 15px; backdrop-filter: blur(14px); }
+.focus-stage--with-video .pomodoro-dial { width: 108px; height: 108px; min-width: 108px; min-height: 108px; box-shadow: 0 13px 35px rgba(0,0,0,.22); }
+.focus-stage--with-video .pomodoro-dial > div { width: calc(100% - 8px); height: calc(100% - 8px); }
+.focus-stage--with-video .pomodoro-dial small { font-size: 7px; }
+.focus-stage--with-video .pomodoro-dial strong { margin: 5px 0 2px; font-size: 31px; }
+.focus-stage--with-video .pomodoro-dial span { font-size: 8px; }
+.focus-stage--with-video .focus-timer-actions { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 14px; }
+.focus-stage--with-video .timer-controls { justify-content: flex-start; margin: 0; }
+.focus-stage--with-video .timer-controls button { min-height: 34px; padding: 0 10px; }
+.focus-stage--with-video .timer-follow-note { margin: 0; }
+.focus-stage--with-video .focus-room-description { max-width: 260px; margin: 0; text-align: right; }
+
+.focus-timer-panel { display: flex; flex-direction: column; align-items: center; }
+.focus-timer-actions { display: flex; flex-direction: column; align-items: center; }
 
 .pomodoro-dial {
   display: grid;
@@ -517,6 +563,11 @@
   .focus-stage { min-height: 610px; }
   .room-members-panel { min-height: 610px; }
   .room-chat-panel { grid-column: 1 / -1; min-height: 510px; }
+  .room-workspace--with-video { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto 450px; }
+  .room-workspace--with-video .focus-stage { grid-column: 1 / -1; grid-row: 1; min-height: 720px; }
+  .room-workspace--with-video .room-members-panel { grid-column: 1; grid-row: 2; min-height: 0; }
+  .room-workspace--with-video .room-chat-panel { grid-column: 2; grid-row: 2; min-height: 0; }
+  .focus-stage--with-video .room-video-grid--dense { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
 
 @media (max-width: 760px) {
@@ -540,6 +591,15 @@
   .connection-pill { padding: 7px 9px; font-size: 9px; }
   .room-workspace { display: flex; height: auto; flex-direction: column; padding: 10px; }
   .focus-stage { min-height: 540px; padding: 25px 15px; }
+  .focus-stage--with-video { display: grid; min-height: 780px; padding: 65px 12px 12px; }
+  .focus-stage--with-video .room-video-grid,
+  .focus-stage--with-video .room-video-grid--medium,
+  .focus-stage--with-video .room-video-grid--dense { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: none; }
+  .focus-stage--with-video .focus-timer-panel { grid-template-columns: 92px minmax(0, 1fr); gap: 10px; }
+  .focus-stage--with-video .pomodoro-dial { width: 92px; height: 92px; min-width: 92px; min-height: 92px; }
+  .focus-stage--with-video .pomodoro-dial strong { font-size: 26px; }
+  .focus-stage--with-video .focus-timer-actions { align-items: flex-start; flex-direction: column; justify-content: center; gap: 8px; }
+  .focus-stage--with-video .focus-room-description { display: none; }
   .pomodoro-dial { width: 260px; height: 260px; min-width: 0; min-height: 0; }
   .pomodoro-dial strong { font-size: 61px; }
   .timer-controls { max-width: 310px; }
@@ -559,4 +619,12 @@
   .room-card footer { align-items: flex-end; }
   .pomodoro-dial { width: 235px; height: 235px; }
   .pomodoro-dial strong { font-size: 54px; }
+  .room-camera-toolbar { align-items: flex-start; flex-direction: column; }
+  .camera-toggle { width: 100%; justify-content: center; }
+  .focus-stage--with-video { min-height: 850px; }
+  .focus-stage--with-video .focus-timer-panel { grid-template-columns: 82px minmax(0, 1fr); }
+  .focus-stage--with-video .pomodoro-dial { width: 82px; height: 82px; min-width: 82px; min-height: 82px; }
+  .focus-stage--with-video .pomodoro-dial strong { font-size: 23px; }
+  .focus-stage--with-video .timer-controls { gap: 5px; }
+  .focus-stage--with-video .timer-controls button { min-height: 31px; padding: 0 8px; font-size: 9px; }
 }

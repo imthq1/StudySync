@@ -534,7 +534,8 @@
   color: var(--color-primary);
 }
 
-.panel-heading button {
+.panel-heading button,
+.panel-heading > a {
   display: inline-flex;
   align-items: center;
   gap: 3px;
@@ -545,6 +546,7 @@
   font-size: 9px;
   font-weight: 700;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .compact-room-list,
@@ -626,23 +628,48 @@
   font-size: 8px;
 }
 
-.compact-room > button {
+.compact-room > button,
+.compact-room > a {
+  display: flex;
   width: 100%;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
   margin-top: 15px;
+  padding: 10px 12px;
   color: var(--color-white);
   background: var(--color-primary);
   border: 0;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
 }
 
-.compact-room--pink > button { background: var(--color-secondary); }
-.compact-room--green > button { color: #0f766e; background: #ecfeff; border: 1px solid #67e8f9; }
+.compact-room--pink > button,
+.compact-room--pink > a { background: var(--color-secondary); }
+.compact-room--green > button,
+.compact-room--green > a { color: #0f766e; background: #ecfeff; border: 1px solid #67e8f9; }
+
+.compact-room-skeleton { height: 150px; background: linear-gradient(100deg, #f1f5f9 25%, #e2e8f0 38%, #f1f5f9 52%); background-size: 200% 100%; border-radius: 12px; animation: posts-skeleton 1.2s ease-in-out infinite; }
+.compact-room-state { padding: 18px 12px; color: var(--color-text-muted); background: var(--color-background); border: 1px dashed var(--color-border); border-radius: 12px; font-size: 10px; line-height: 1.5; text-align: center; }
 
 .new-room-button {
+  display: flex;
   width: 100%;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   margin-top: 12px;
   color: var(--color-text-secondary);
   background: transparent;
   border: 1px dashed var(--color-border);
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 800;
+  text-decoration: none;
 }
 
 .new-room-button:hover {

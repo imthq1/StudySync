@@ -1,9 +1,7 @@
 import {
   Bookmark,
   ChevronDown,
-  Clock3,
   LogOut,
-  Play,
   Settings,
   UserRound,
 } from "lucide-react";
@@ -61,7 +59,7 @@ function AppNavbar() {
                 <Link to="/profile">
                   <UserRound size={17} aria-hidden="true" /> Hồ sơ
                 </Link>
-                <Link to="/saved-posts">
+                <Link to="/profile?tab=saved">
                   <Bookmark size={17} aria-hidden="true" /> Bài viết đã lưu
                 </Link>
                 <Link to="/settings">
