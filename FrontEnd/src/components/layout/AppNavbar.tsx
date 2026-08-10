@@ -41,22 +41,6 @@ function AppNavbar() {
         </Link>
 
         <div className="navbar-session-actions">
-          <button className="start-focus-button" type="button">
-            <Play size={16} fill="currentColor" aria-hidden="true" />
-            <span>
-              <strong>Bắt đầu tập trung</strong>
-              <small>Focus+</small>
-            </span>
-          </button>
-          <button
-            className="timer-button"
-            type="button"
-            aria-label="Đồng hồ Pomodoro"
-          >
-            <Clock3 size={18} />
-            <span>25:00</span>
-          </button>
-
           <details className="user-menu">
             <summary aria-label="Mở menu tài khoản">
               <span className="user-avatar">{userInitials}</span>
