@@ -30,35 +30,15 @@ import {
   unlikePost,
 } from "../services/interactions.service";
 import { getPosts } from "../services/posts.service";
+import { getStudyRooms } from "../services/study-rooms.service";
 import { getTags } from "../services/tags.service";
 import type { PageMetadata, Post, PostContentType, Tag } from "../types/post";
+import type { StudyRoom } from "../types/study-room";
 import "../styles/posts.css";
 
 const PAGE_SIZE = 8;
 
-const roomItems = [
-  {
-    title: "LeetCode Daily #88",
-    topic: "Array & Hashing",
-    progress: 62,
-    members: "5/8",
-    color: "blue",
-  },
-  {
-    title: "React Deep Dive",
-    topic: "Hooks & Performance",
-    progress: 48,
-    members: "3/6",
-    color: "pink",
-  },
-  {
-    title: "SQL Practice Zone",
-    topic: "Window Functions",
-    progress: 70,
-    members: "7/10",
-    color: "green",
-  },
-];
+const roomColors = ["blue", "pink", "green"] as const;
 
 const suggestedPeople = [
   {
@@ -135,8 +115,11 @@ function PostsPage() {
   >([]);
   const [page, setPage] = useState<PageMetadata>(initialPage);
   const [tags, setTags] = useState<Tag[]>([]);
+  const [studyRooms, setStudyRooms] = useState<StudyRoom[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [areRoomsLoading, setAreRoomsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [roomsErrorMessage, setRoomsErrorMessage] = useState("");
   const [pendingInteraction, setPendingInteraction] = useState<string | null>(null);
   const [interactionErrorMessage, setInteractionErrorMessage] = useState("");
 
@@ -154,6 +137,33 @@ function PostsPage() {
     }
 
     loadTags();
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadStudyRooms() {
+      setAreRoomsLoading(true);
+      setRoomsErrorMessage("");
+
+      try {
+        setStudyRooms(await getStudyRooms(controller.signal));
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setStudyRooms([]);
+          setRoomsErrorMessage(
+            getApiErrorMessage(error, "Không thể tải danh sách phòng học."),
+          );
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setAreRoomsLoading(false);
+        }
+      }
+    }
+
+    void loadStudyRooms();
     return () => controller.abort();
   }, []);
 
@@ -488,38 +498,55 @@ function PostsPage() {
                 <h2>
                   <Flame size={17} /> Study Rooms
                 </h2>
-                <button type="button">
+                <Link to="/study-rooms">
                   Xem tất cả <ArrowRight size={13} />
-                </button>
+                </Link>
               </header>
 
               <div className="compact-room-list">
-                {roomItems.map((room) => (
-                  <article
-                    className={`compact-room compact-room--${room.color}`}
-                    key={room.title}
+                {areRoomsLoading && Array.from({ length: 3 }, (_, index) => (
+                  <div className="compact-room-skeleton" key={index} />
+                ))}
+
+                {!areRoomsLoading && roomsErrorMessage && (
+                  <div className="compact-room-state" role="alert">{roomsErrorMessage}</div>
+                )}
+
+                {!areRoomsLoading && !roomsErrorMessage && studyRooms.length === 0 && (
+                  <div className="compact-room-state">Chưa có phòng học đang hoạt động.</div>
+                )}
+
+                {!areRoomsLoading && !roomsErrorMessage && studyRooms.slice(0, 3).map((room, index) => {
+                  const color = roomColors[index % roomColors.length];
+                  const occupancy = room.maxMembers > 0
+                    ? Math.min(100, Math.round((room.memberCount / room.maxMembers) * 100))
+                    : 0;
+
+                  return <article
+                    className={`compact-room compact-room--${color}`}
+                    key={room.id}
                   >
                     <div className="compact-room-title">
-                      <strong>{room.title}</strong>
+                      <strong>{room.name}</strong>
                       <span>
                         <i /> LIVE
                       </span>
                     </div>
-                    <p>{room.topic}</p>
+                    <p>{room.topic || "Học tập tự do"}</p>
                     <div className="compact-progress">
-                      <span style={{ width: `${room.progress}%` }} />
+                      <span style={{ width: `${occupancy}%` }} />
                     </div>
-                    <small>{room.members}</small>
-                    <button type="button">
-                      {room.color === "green" ? "Xem phòng" : "Tham gia ngay"}
-                    </button>
-                  </article>
-                ))}
+                    <small>{room.memberCount}/{room.maxMembers}</small>
+                    <Link to={`/study-rooms/${room.id}`}>
+                      {room.isMember ? "Xem phòng" : "Tham gia ngay"}
+                    </Link>
+                  </article>;
+                })}
               </div>
 
-              <button className="new-room-button" type="button">
+              <Link className="new-room-button" to="/study-rooms">
                 <Plus size={14} /> Tạo phòng học mới
-              </button>
+              </Link>
             </section>
 
             <section className="sidebar-panel people-panel">
