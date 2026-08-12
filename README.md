@@ -89,10 +89,10 @@ StudySync là nền tảng học tập cộng tác kết hợp mạng xã hội 
 
 ### Frontend
 
-- React 19
-- TypeScript 6
-- Vite 8
-- React Router 7
+- React 
+- TypeScript 
+- Vite 
+- React Router 
 - Axios
 - STOMP.js
 - WebRTC API
@@ -102,8 +102,8 @@ StudySync là nền tảng học tập cộng tác kết hợp mạng xã hội 
 
 ### Backend
 
-- Java 17
-- Spring Boot 4
+- Java 
+- Spring Boot 
 - Spring Security
 - OAuth2 Resource Server và JWT
 - Spring Data JPA
