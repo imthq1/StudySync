@@ -51,11 +51,26 @@ public class PostController {
         return ResponseEntity.ok(postService.getMyPosts(pageable));
     }
 
+    @GetMapping("/user/{userId}")
+    @ApiMessage("Fetch user posts")
+    public ResponseEntity<Page<PostResponse>> userPosts(
+            @PathVariable Long userId,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(postService.getUserPosts(userId, pageable));
+    }
+
     @GetMapping("/bookmarked")
     @ApiMessage("Fetch bookmarked posts")
     public ResponseEntity<Page<PostResponse>> bookmarked(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(postService.getBookmarkedPosts(pageable));
+    }
+
+    @GetMapping("/liked")
+    @ApiMessage("Fetch liked posts")
+    public ResponseEntity<Page<PostResponse>> liked(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(postService.getLikedPosts(pageable));
     }
 
     @PostMapping

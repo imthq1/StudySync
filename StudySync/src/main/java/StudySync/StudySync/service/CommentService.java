@@ -6,11 +6,14 @@ import StudySync.StudySync.domain.entity.User;
 import StudySync.StudySync.domain.request.CreateCommentRequest;
 import StudySync.StudySync.domain.request.UpdateCommentRequest;
 import StudySync.StudySync.domain.response.CommentResponse;
+import StudySync.StudySync.domain.response.CommentActivityResponse;
 import StudySync.StudySync.exception.BadRequestException;
 import StudySync.StudySync.exception.ResourceNotFoundException;
 import StudySync.StudySync.repository.CommentRepository;
 import StudySync.StudySync.util.CommentMapper;
 import StudySync.StudySync.util.SecurityUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +41,19 @@ public class CommentService {
     public List<CommentResponse> getByPostId(Long postId) {
         postService.getPostOrThrow(postId);
         return CommentMapper.toTree(commentRepository.findByPostIdOrderByCreatedAtAsc(postId));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CommentActivityResponse> getMyComments(Pageable pageable) {
+        Long userId = securityUtil.getCurrentUserIdOrThrow();
+        return commentRepository.findByAuthorId(userId, pageable).map(comment -> CommentActivityResponse.builder()
+                .id(comment.getId())
+                .content(comment.getContent())
+                .parentId(comment.getParent() == null ? null : comment.getParent().getId())
+                .postId(comment.getPost().getId())
+                .postTitle(comment.getPost().getTitle())
+                .createdAt(comment.getCreatedAt())
+                .build());
     }
 
     @Transactional

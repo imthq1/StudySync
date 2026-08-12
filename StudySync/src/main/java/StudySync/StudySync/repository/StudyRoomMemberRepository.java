@@ -11,4 +11,5 @@ public interface StudyRoomMemberRepository extends JpaRepository<StudyRoomMember
     boolean existsByRoomIdAndUserId(Long roomId, Long userId);
     long countByRoomId(Long roomId);
     List<StudyRoomMember> findByRoomIdOrderByJoinedAtAsc(Long roomId);
+    long countByUserId(Long userId);
 }

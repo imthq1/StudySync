@@ -1,11 +1,15 @@
 package StudySync.StudySync.controller;
 
 import StudySync.StudySync.domain.response.UserResponse;
+import StudySync.StudySync.domain.response.FollowActivityResponse;
 import StudySync.StudySync.service.FollowService;
 import StudySync.StudySync.util.ApiMessage;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 import java.util.List;
 
@@ -41,5 +45,12 @@ public class FollowController {
     @ApiMessage("Fetch following")
     public ResponseEntity<List<UserResponse>> following(@PathVariable Long userId) {
         return ResponseEntity.ok(followService.getFollowing(userId));
+    }
+
+    @GetMapping("/feed")
+    @ApiMessage("Fetch followed users activity feed")
+    public ResponseEntity<Page<FollowActivityResponse>> feed(
+            @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(followService.getFeed(pageable));
     }
 }

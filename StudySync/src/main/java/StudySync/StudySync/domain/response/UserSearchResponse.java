@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
-public class UserProfileResponse {
-    private UserResponse user;
-    private long followerCount;
-    private long followingCount;
+public class UserSearchResponse {
+    private Long id;
+    private String fullName;
+    private String avatarUrl;
+    private String bio;
+    private Integer reputationPoints;
     @Getter(AccessLevel.NONE)
     private boolean isFollowing;
 

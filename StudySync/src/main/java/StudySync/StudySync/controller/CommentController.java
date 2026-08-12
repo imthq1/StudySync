@@ -3,9 +3,14 @@ package StudySync.StudySync.controller;
 import StudySync.StudySync.domain.request.CreateCommentRequest;
 import StudySync.StudySync.domain.request.UpdateCommentRequest;
 import StudySync.StudySync.domain.response.CommentResponse;
+import StudySync.StudySync.domain.response.CommentActivityResponse;
 import StudySync.StudySync.service.CommentService;
 import StudySync.StudySync.util.ApiMessage;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +30,13 @@ public class CommentController {
     @ApiMessage("Fetch comments")
     public ResponseEntity<List<CommentResponse>> list(@PathVariable Long postId) {
         return ResponseEntity.ok(commentService.getByPostId(postId));
+    }
+
+    @GetMapping("/comments/me")
+    @ApiMessage("Fetch my comment activity")
+    public ResponseEntity<Page<CommentActivityResponse>> myComments(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(commentService.getMyComments(pageable));
     }
 
     @PostMapping("/posts/{postId}/comments")

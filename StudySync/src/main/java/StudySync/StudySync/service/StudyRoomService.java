@@ -6,6 +6,7 @@ import StudySync.StudySync.domain.entity.StudyRoomMessage;
 import StudySync.StudySync.domain.entity.User;
 import StudySync.StudySync.domain.enums.*;
 import StudySync.StudySync.domain.request.CreateStudyRoomRequest;
+import StudySync.StudySync.domain.request.StudyRoomWebRtcSignalRequest;
 import StudySync.StudySync.domain.response.*;
 import StudySync.StudySync.exception.BadRequestException;
 import StudySync.StudySync.exception.ResourceNotFoundException;
@@ -164,6 +165,54 @@ public class StudyRoomService {
         StudyRoomTimerResponse response = toTimerResponse(room);
         publish(roomId, StudyRoomEventType.TIMER_UPDATED, response);
         return response;
+    }
+
+    @Transactional(readOnly = true)
+    public void relayWebRtcSignal(Long roomId, Long senderId, StudyRoomWebRtcSignalRequest request) {
+        getActiveRoom(roomId);
+        ensureMember(roomId, senderId);
+
+        boolean directedSignal = request.getSignalType() != StudyRoomWebRtcSignalType.CAMERA_STATE;
+        if (directedSignal) {
+            if (request.getTargetUserId() == null) {
+                throw new BadRequestException("Target user is required for WebRTC signaling");
+            }
+            if (request.getTargetUserId().equals(senderId)) {
+                throw new BadRequestException("Cannot send a WebRTC signal to yourself");
+            }
+            ensureMember(roomId, request.getTargetUserId());
+        }
+
+        switch (request.getSignalType()) {
+            case OFFER, ANSWER -> {
+                if (request.getSdp() == null || request.getSdp().isBlank()) {
+                    throw new BadRequestException("SDP is required for offer and answer signals");
+                }
+            }
+            case ICE_CANDIDATE -> {
+                if (request.getCandidate() == null || request.getCandidate().isBlank()) {
+                    throw new BadRequestException("ICE candidate is required");
+                }
+            }
+            case CAMERA_STATE -> {
+                if (request.getCameraEnabled() == null) {
+                    throw new BadRequestException("Camera state is required");
+                }
+            }
+        }
+
+        StudyRoomWebRtcSignalResponse response = StudyRoomWebRtcSignalResponse.builder()
+                .signalType(request.getSignalType())
+                .fromUserId(senderId)
+                .targetUserId(request.getTargetUserId())
+                .sdp(request.getSdp())
+                .candidate(request.getCandidate())
+                .sdpMid(request.getSdpMid())
+                .sdpMLineIndex(request.getSdpMLineIndex())
+                .usernameFragment(request.getUsernameFragment())
+                .cameraEnabled(request.getCameraEnabled())
+                .build();
+        publish(roomId, StudyRoomEventType.WEBRTC_SIGNAL, response);
     }
 
     private void startTimer(StudyRoom room, TimerMode mode, int durationMinutes, Instant now) {

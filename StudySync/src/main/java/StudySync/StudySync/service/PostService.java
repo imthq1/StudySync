@@ -79,9 +79,22 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
+    public Page<PostResponse> getUserPosts(Long userId, Pageable pageable) {
+        userService.getUserOrThrow(userId);
+        return postRepository.findByAuthorId(userId, pageable).map(this::toResponse);
+    }
+
+    @Transactional(readOnly = true)
     public Page<PostResponse> getBookmarkedPosts(Pageable pageable) {
         Long userId = securityUtil.getCurrentUserIdOrThrow();
-        return postRepository.findBookmarkedByUserId(userId, InteractionType.BOOKMARK, pageable)
+        return postRepository.findInteractedByUserId(userId, InteractionType.BOOKMARK, pageable)
+                .map(this::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PostResponse> getLikedPosts(Pageable pageable) {
+        Long userId = securityUtil.getCurrentUserIdOrThrow();
+        return postRepository.findInteractedByUserId(userId, InteractionType.LIKE, pageable)
                 .map(this::toResponse);
     }
 

@@ -2,6 +2,7 @@ package StudySync.StudySync.controller;
 
 import StudySync.StudySync.domain.request.StudyRoomMessageRequest;
 import StudySync.StudySync.domain.request.StudyRoomTimerRequest;
+import StudySync.StudySync.domain.request.StudyRoomWebRtcSignalRequest;
 import StudySync.StudySync.exception.BadRequestException;
 import StudySync.StudySync.service.StudyRoomService;
 import jakarta.validation.Valid;
@@ -35,6 +36,13 @@ public class StudyRoomWebSocketController {
                             @Valid @Payload StudyRoomTimerRequest request,
                             JwtAuthenticationToken authentication) {
         studyRoomService.updateTimer(roomId, extractUserId(authentication), request.getAction());
+    }
+
+    @MessageMapping("/study-rooms/{roomId}/webrtc")
+    public void relayWebRtcSignal(@DestinationVariable Long roomId,
+                                  @Valid @Payload StudyRoomWebRtcSignalRequest request,
+                                  JwtAuthenticationToken authentication) {
+        studyRoomService.relayWebRtcSignal(roomId, extractUserId(authentication), request);
     }
 
     private Long extractUserId(JwtAuthenticationToken authentication) {
