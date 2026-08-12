@@ -12,6 +12,7 @@ import RegisterPage from '../pages/RegisterPage'
 import UserFeaturePage from '../pages/UserFeaturePage'
 import StudyRoomPage from '../pages/StudyRoomPage'
 import StudyRoomsPage from '../pages/StudyRoomsPage'
+import StatisticsPage from '../pages/StatisticsPage'
 
 function LoginRoute() {
   const navigate = useNavigate()
@@ -64,6 +65,7 @@ function App() {
       <Route path="/study-rooms/:roomId" element={<ProtectedRoute><StudyRoomPage /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
       <Route path="/users/:userId" element={<ProtectedRoute><PublicProfilePage /></ProtectedRoute>} />
+      <Route path="/statistics" element={<ProtectedRoute><StatisticsPage /></ProtectedRoute>} />
       <Route path="/saved-posts" element={<ProtectedRoute><Navigate to="/profile?tab=saved" replace /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><UserFeaturePage title="Cài đặt" /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />

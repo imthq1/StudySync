@@ -1,8 +1,9 @@
 import axios from 'axios'
+import { API_URL } from '../config/environment'
 import { expireAuthSession, getAuthSession, isAccessTokenExpired } from './auth-session'
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8080',
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },

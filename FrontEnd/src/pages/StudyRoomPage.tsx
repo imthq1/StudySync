@@ -20,6 +20,7 @@ import timerCompleteSoundUrl from '../assets/universfield-new-notification-039-4
 import AppNavbar from '../components/layout/AppNavbar'
 import StudySidebar from '../components/layout/StudySidebar'
 import RoomVideoGrid from '../components/study-rooms/RoomVideoGrid'
+import { API_URL } from '../config/environment'
 import { useStudyRoomWebRtc } from '../hooks/useStudyRoomWebRtc'
 import { getApiErrorMessage } from '../services/api-client'
 import { getAuthSession } from '../services/auth-session'
@@ -142,8 +143,7 @@ function StudyRoomPage() {
     }
 
     let disposed = false
-    const apiUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
-    const socketUrl = `${apiUrl.replace(/^http/, 'ws').replace(/\/$/, '')}/ws`
+    const socketUrl = `${API_URL.replace(/^http/, 'ws')}/ws`
     const handleMessage = (frame: IMessage) => {
       try {
         const event = JSON.parse(frame.body) as StudyRoomEvent

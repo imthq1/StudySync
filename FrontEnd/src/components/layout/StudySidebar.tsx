@@ -3,7 +3,6 @@ import {
   Flame,
   Home,
   Library,
-  MessageCircle,
   Settings2,
   UserRound,
   UsersRound,
@@ -13,10 +12,9 @@ import { Link, useLocation } from "react-router-dom";
 const sidebarItems = [
   { label: "Trang chủ", icon: Home, href: "/" },
   { label: "Hồ sơ", icon: UserRound, href: "/profile" },
-  { label: "Tin nhắn", icon: MessageCircle, href: "/#messages" },
   { label: "Phòng học", icon: UsersRound, href: "/study-rooms" },
   { label: "Kho kiến thức", icon: Library, href: "/posts" },
-  { label: "Thống kê", icon: BarChart3, href: "/#stats" },
+  { label: "Thống kê", icon: BarChart3, href: "/statistics" },
   { label: "Cài đặt", icon: Settings2, href: "/settings" },
 ];
 
@@ -28,7 +26,13 @@ function StudySidebar() {
       <div className="sidebar-links">
         {sidebarItems.map(({ label, icon: Icon, href }) => (
           <Link
-            className={location.pathname === href || (href === "/study-rooms" && location.pathname.startsWith("/study-rooms/")) ? "is-active" : ""}
+            className={
+              location.pathname === href ||
+              (href === "/study-rooms" &&
+                location.pathname.startsWith("/study-rooms/"))
+                ? "is-active"
+                : ""
+            }
             to={href}
             key={label}
             aria-label={label}

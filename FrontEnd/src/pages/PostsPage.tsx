@@ -9,7 +9,6 @@ import {
   FileText,
   Flame,
   Heart,
-  Link2,
   MessageCircle,
   MessagesSquare,
   NotebookPen,
@@ -17,7 +16,6 @@ import {
   PenLine,
   Plus,
   Search,
-  Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import AppNavbar from "../components/layout/AppNavbar";
@@ -39,27 +37,6 @@ import "../styles/posts.css";
 const PAGE_SIZE = 8;
 
 const roomColors = ["blue", "pink", "green"] as const;
-
-const suggestedPeople = [
-  {
-    name: "An Nhiên",
-    initials: "AN",
-    role: "Frontend Dev",
-    tags: ["React", "TypeScript"],
-  },
-  {
-    name: "Khoa Lê",
-    initials: "KL",
-    role: "Data Science",
-    tags: ["Python", "ML"],
-  },
-  {
-    name: "Thảo Vy",
-    initials: "TV",
-    role: "Backend Dev",
-    tags: ["Node.js", "Database"],
-  },
-];
 
 const typeMeta: Record<
   PostContentType,
@@ -120,7 +97,9 @@ function PostsPage() {
   const [areRoomsLoading, setAreRoomsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [roomsErrorMessage, setRoomsErrorMessage] = useState("");
-  const [pendingInteraction, setPendingInteraction] = useState<string | null>(null);
+  const [pendingInteraction, setPendingInteraction] = useState<string | null>(
+    null,
+  );
   const [interactionErrorMessage, setInteractionErrorMessage] = useState("");
 
   useEffect(() => {
@@ -213,9 +192,9 @@ function PostsPage() {
   }
 
   function updatePost(postId: number, updater: (post: Post) => Post) {
-    setPosts((currentPosts) => currentPosts.map((post) => (
-      post.id === postId ? updater(post) : post
-    )));
+    setPosts((currentPosts) =>
+      currentPosts.map((post) => (post.id === postId ? updater(post) : post)),
+    );
   }
 
   async function handleToggleLike(post: Post) {
@@ -345,7 +324,9 @@ function PostsPage() {
             </div>
 
             {interactionErrorMessage && (
-              <div className="posts-interaction-error" role="alert">{interactionErrorMessage}</div>
+              <div className="posts-interaction-error" role="alert">
+                {interactionErrorMessage}
+              </div>
             )}
 
             <div className="knowledge-list" aria-live="polite">
@@ -414,23 +395,48 @@ function PostsPage() {
                           type="button"
                           onClick={() => handleToggleLike(post)}
                           disabled={pendingInteraction === `like-${post.id}`}
-                          aria-label={post.likedByCurrentUser ? "Bỏ thích bài viết" : "Thích bài viết"}
+                          aria-label={
+                            post.likedByCurrentUser
+                              ? "Bỏ thích bài viết"
+                              : "Thích bài viết"
+                          }
                           aria-pressed={post.likedByCurrentUser}
                         >
-                          <Heart size={13} fill={post.likedByCurrentUser ? "currentColor" : "none"} /> {post.likeCount}
+                          <Heart
+                            size={13}
+                            fill={
+                              post.likedByCurrentUser ? "currentColor" : "none"
+                            }
+                          />{" "}
+                          {post.likeCount}
                         </button>
                         <span>
                           <MessageCircle size={13} /> {post.commentCount}
                         </span>
                         <button
-                          className={post.bookmarkedByCurrentUser ? "is-active" : ""}
+                          className={
+                            post.bookmarkedByCurrentUser ? "is-active" : ""
+                          }
                           type="button"
                           onClick={() => handleToggleBookmark(post)}
-                          disabled={pendingInteraction === `bookmark-${post.id}`}
-                          aria-label={post.bookmarkedByCurrentUser ? "Bỏ lưu bài viết" : "Lưu bài viết"}
+                          disabled={
+                            pendingInteraction === `bookmark-${post.id}`
+                          }
+                          aria-label={
+                            post.bookmarkedByCurrentUser
+                              ? "Bỏ lưu bài viết"
+                              : "Lưu bài viết"
+                          }
                           aria-pressed={post.bookmarkedByCurrentUser}
                         >
-                          <Bookmark size={13} fill={post.bookmarkedByCurrentUser ? "currentColor" : "none"} />
+                          <Bookmark
+                            size={13}
+                            fill={
+                              post.bookmarkedByCurrentUser
+                                ? "currentColor"
+                                : "none"
+                            }
+                          />
                         </button>
                       </div>
                     </article>
@@ -504,83 +510,68 @@ function PostsPage() {
               </header>
 
               <div className="compact-room-list">
-                {areRoomsLoading && Array.from({ length: 3 }, (_, index) => (
-                  <div className="compact-room-skeleton" key={index} />
-                ))}
+                {areRoomsLoading &&
+                  Array.from({ length: 3 }, (_, index) => (
+                    <div className="compact-room-skeleton" key={index} />
+                  ))}
 
                 {!areRoomsLoading && roomsErrorMessage && (
-                  <div className="compact-room-state" role="alert">{roomsErrorMessage}</div>
+                  <div className="compact-room-state" role="alert">
+                    {roomsErrorMessage}
+                  </div>
                 )}
 
-                {!areRoomsLoading && !roomsErrorMessage && studyRooms.length === 0 && (
-                  <div className="compact-room-state">Chưa có phòng học đang hoạt động.</div>
-                )}
-
-                {!areRoomsLoading && !roomsErrorMessage && studyRooms.slice(0, 3).map((room, index) => {
-                  const color = roomColors[index % roomColors.length];
-                  const occupancy = room.maxMembers > 0
-                    ? Math.min(100, Math.round((room.memberCount / room.maxMembers) * 100))
-                    : 0;
-
-                  return <article
-                    className={`compact-room compact-room--${color}`}
-                    key={room.id}
-                  >
-                    <div className="compact-room-title">
-                      <strong>{room.name}</strong>
-                      <span>
-                        <i /> LIVE
-                      </span>
+                {!areRoomsLoading &&
+                  !roomsErrorMessage &&
+                  studyRooms.length === 0 && (
+                    <div className="compact-room-state">
+                      Chưa có phòng học đang hoạt động.
                     </div>
-                    <p>{room.topic || "Học tập tự do"}</p>
-                    <div className="compact-progress">
-                      <span style={{ width: `${occupancy}%` }} />
-                    </div>
-                    <small>{room.memberCount}/{room.maxMembers}</small>
-                    <Link to={`/study-rooms/${room.id}`}>
-                      {room.isMember ? "Xem phòng" : "Tham gia ngay"}
-                    </Link>
-                  </article>;
-                })}
+                  )}
+
+                {!areRoomsLoading &&
+                  !roomsErrorMessage &&
+                  studyRooms.slice(0, 3).map((room, index) => {
+                    const color = roomColors[index % roomColors.length];
+                    const occupancy =
+                      room.maxMembers > 0
+                        ? Math.min(
+                            100,
+                            Math.round(
+                              (room.memberCount / room.maxMembers) * 100,
+                            ),
+                          )
+                        : 0;
+
+                    return (
+                      <article
+                        className={`compact-room compact-room--${color}`}
+                        key={room.id}
+                      >
+                        <div className="compact-room-title">
+                          <strong>{room.name}</strong>
+                          <span>
+                            <i /> LIVE
+                          </span>
+                        </div>
+                        <p>{room.topic || "Học tập tự do"}</p>
+                        <div className="compact-progress">
+                          <span style={{ width: `${occupancy}%` }} />
+                        </div>
+                        <small>
+                          {room.memberCount}/{room.maxMembers}
+                        </small>
+                        <Link to={`/study-rooms/${room.id}`}>
+                          {room.isMember ? "Xem phòng" : "Tham gia ngay"}
+                        </Link>
+                      </article>
+                    );
+                  })}
               </div>
 
               <Link className="new-room-button" to="/study-rooms">
                 <Plus size={14} /> Tạo phòng học mới
               </Link>
-            </section>
-
-            <section className="sidebar-panel people-panel">
-              <header className="panel-heading">
-                <h2>
-                  <Users size={17} /> Bạn cùng tiến
-                </h2>
-                <button type="button">
-                  Tìm thêm <ArrowRight size={13} />
-                </button>
-              </header>
-
-              <div className="suggested-list">
-                {suggestedPeople.map((person) => (
-                  <article className="suggested-person" key={person.name}>
-                    <span className="suggested-avatar">
-                      {person.initials}
-                      <i />
-                    </span>
-                    <div>
-                      <strong>{person.name}</strong>
-                      <small>{person.role}</small>
-                      <p>
-                        {person.tags.map((tag) => (
-                          <span key={tag}>{tag}</span>
-                        ))}
-                      </p>
-                    </div>
-                    <button type="button">
-                      <Link2 size={12} /> Kết nối
-                    </button>
-                  </article>
-                ))}
-              </div>
             </section>
           </aside>
         </div>
