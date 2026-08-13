@@ -95,19 +95,28 @@ jobs:
             exit 1
           fi
 
-          docker compose config > /dev/null
-          docker compose build --pull
-          docker compose up -d --remove-orphans
+          if docker compose version >/dev/null 2>&1; then
+            compose() { docker compose "$@"; }
+          elif command -v docker-compose >/dev/null 2>&1; then
+            compose() { docker-compose "$@"; }
+          else
+            echo "Docker Compose is not installed on EC2. Install the Docker Compose plugin and rerun this workflow." >&2
+            exit 1
+          fi
+
+          compose config > /dev/null
+          compose build --pull
+          compose up -d --remove-orphans
 
           for attempt in $(seq 1 30); do
             if curl --fail --silent http://127.0.0.1:8080/actuator/health/readiness >/dev/null; then
-              docker compose ps
+              compose ps
               exit 0
             fi
             sleep 5
           done
 
-          docker compose ps
-          docker compose logs --tail=200 backend
+          compose ps
+          compose logs --tail=200 backend
           exit 1
           REMOTE
