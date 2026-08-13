@@ -12,5 +12,5 @@ public final class TagMapper {
                 .id(tag.getId())
                 .name(tag.getName())
                 .build();
-    }
+     }
 }
