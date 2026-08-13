@@ -95,7 +95,7 @@ jobs:
             exit 1
           fi
 
-          docker compose config --quiet
+          docker compose config > /dev/null
           docker compose build --pull
           docker compose up -d --remove-orphans
 
