@@ -40,7 +40,7 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.CI_SPRING_DATASOURCE_PASSWORD }}
           JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
           SPRING_JPA_HIBERNATE_DDL_AUTO: validate
-        run: ./mvnw --batch-mode clean verify
+        run: sh ./mvnw --batch-mode clean verify
 
   deploy:
     needs: test
