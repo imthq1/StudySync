@@ -115,7 +115,7 @@ jobs:
             fi
             sleep 5
           done
- 
+  
           compose ps
           compose logs --tail=200 backend
           exit 1
