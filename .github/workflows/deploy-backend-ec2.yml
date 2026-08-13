@@ -50,7 +50,7 @@ jobs:
       EC2_HOST: ${{ secrets.EC2_HOST }}
       EC2_USER: ${{ vars.EC2_USER || 'ubuntu' }}
       EC2_SSH_PORT: ${{ vars.EC2_SSH_PORT || '22' }}
-      EC2_DEPLOY_PATH: ${{ vars.EC2_DEPLOY_PATH || '/opt/studysync/backend' }}
+      EC2_DEPLOY_PATH: ${{ vars.EC2_DEPLOY_PATH || '/home/ubuntu/studysync/backend' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
