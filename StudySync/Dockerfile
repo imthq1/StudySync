@@ -1,7 +1,7 @@
 # ============================================
 # STAGE 1: BUILD - biên dịch mã nguồn và đóng gói thành .jar
 # ============================================
-FROM eclipse-temurin:17-jdk-jammy AS build
+FROM eclipse-temurin:17-jdk-noble AS build
 
 WORKDIR /app
 
@@ -27,7 +27,12 @@ RUN ./mvnw clean package -DskipTests -B
 # ============================================
 # STAGE 2: RUNTIME - chỉ chứa JRE + file .jar, image nhẹ hơn nhiều
 # ============================================
-FROM eclipse-temurin:17-jre-jammy AS runtime
+FROM eclipse-temurin:17-jre-noble AS runtime
+
+# curl is used by the container health check.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Tạo user không phải root để chạy ứng dụng (bảo mật tốt hơn)
 RUN addgroup --system spring && adduser --system --ingroup spring spring
@@ -41,7 +46,10 @@ COPY --from=build /app/target/*.jar app.jar
 # Port mà Spring Boot lắng nghe (đổi nếu app của bạn dùng port khác)
 EXPOSE 8080
 
-# Cấu hình JVM có thể override qua biến môi trường JAVA_OPTS
-ENV JAVA_OPTS=""
+# Cấu hình JVM có thể override qua biến môi trường JAVA_TOOL_OPTIONS
+ENV JAVA_TOOL_OPTIONS=""
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+    CMD curl --fail --silent http://localhost:8080/actuator/health/readiness || exit 1
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

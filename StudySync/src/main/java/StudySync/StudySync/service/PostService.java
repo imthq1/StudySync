@@ -7,6 +7,7 @@ import StudySync.StudySync.domain.enums.InteractionType;
 import StudySync.StudySync.domain.request.CreatePostRequest;
 import StudySync.StudySync.domain.request.UpdatePostRequest;
 import StudySync.StudySync.domain.response.PostResponse;
+import StudySync.StudySync.domain.response.FileUploadResponse;
 import StudySync.StudySync.exception.BadRequestException;
 import StudySync.StudySync.exception.ResourceNotFoundException;
 import StudySync.StudySync.repository.CommentRepository;
@@ -107,6 +108,7 @@ public class PostService {
                 .author(author)
                 .title(request.getTitle())
                 .content(request.getContent())
+                .fileUrl(request.getFileUrl())
                 .contentType(request.getContentType())
                 .tags(tagService.resolveTags(request.getTagNames()))
                 .build();
@@ -115,8 +117,11 @@ public class PostService {
     }
 
     @Transactional
-    public void uploadFile(MultipartFile file) {
-        fileStorageService.store(file);
+    public FileUploadResponse uploadFile(MultipartFile file) {
+        return FileUploadResponse.builder()
+                .fileUrl(fileStorageService.store(file))
+                .originalFilename(file.getOriginalFilename())
+                .build();
     }
 
     @Transactional

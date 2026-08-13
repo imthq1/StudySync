@@ -22,6 +22,9 @@ import java.util.Optional;
 @Service
 public class SecurityUtil {
     public static final MacAlgorithm JWT_ALGORITH=MacAlgorithm.HS256;
+    public static final String TOKEN_TYPE_CLAIM = "token_type";
+    public static final String ACCESS_TOKEN_TYPE = "access";
+    public static final String REFRESH_TOKEN_TYPE = "refresh";
 
     private final JwtEncoder jwtEncoder;
 
@@ -57,6 +60,7 @@ public class SecurityUtil {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
+                .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
                 .claim("user", userInsideToken)
                 .claim("permission", listAuthority)
                 .build();
@@ -81,6 +85,7 @@ public class SecurityUtil {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
+                .claim(TOKEN_TYPE_CLAIM, REFRESH_TOKEN_TYPE)
                 .claim("user", userInsideToken)
                 .build();
         //header
@@ -98,13 +103,9 @@ public class SecurityUtil {
     {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
                 getSecretKey()).macAlgorithm(SecurityUtil.JWT_ALGORITH).build();
-        try{
-            return jwtDecoder.decode(token);
-        }catch (Exception e)
-        {
-            System.out.println(">>> Refresh Token error: "+e.getMessage());
-            throw e;
-        }
+        jwtDecoder.setJwtValidator(JwtValidators.createDefaultWithValidators(
+                new JwtClaimValidator<String>(TOKEN_TYPE_CLAIM, REFRESH_TOKEN_TYPE::equals)));
+        return jwtDecoder.decode(token);
     }
 
 

@@ -12,6 +12,7 @@ import StudySync.StudySync.util.SecurityUtil;
 import StudySync.StudySync.util.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +55,15 @@ public class AuthService {
     }
 
     public TokenResponse refresh(String refreshToken) {
-        Jwt jwt = securityUtil.checkValidRefreshToken(refreshToken);
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new BadRequestException("Refresh token is required");
+        }
+        Jwt jwt;
+        try {
+            jwt = securityUtil.checkValidRefreshToken(refreshToken);
+        } catch (JwtException ex) {
+            throw new BadRequestException("Refresh token is invalid or expired");
+        }
         User user = userRepository.findByEmail(jwt.getSubject())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return buildTokenResponse(user);

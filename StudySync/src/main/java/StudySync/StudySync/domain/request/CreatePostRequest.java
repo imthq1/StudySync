@@ -19,6 +19,8 @@ public class CreatePostRequest {
 
     private String content;
 
+    private String fileUrl;
+
     @NotNull(message = "Content type is required")
     private ContentType contentType;
 

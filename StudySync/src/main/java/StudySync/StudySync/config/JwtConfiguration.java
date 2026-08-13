@@ -10,6 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtClaimValidator;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -38,14 +40,10 @@ public class JwtConfiguration {
     public JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(getSecretKey())
                 .macAlgorithm(SecurityUtil.JWT_ALGORITH).build();
-        return token -> {
-            try {
-                return jwtDecoder.decode(token);
-            } catch (Exception e) {
-                System.out.println(">>> JWT error: " + e.getMessage());
-                throw e;
-            }
-        };
+        jwtDecoder.setJwtValidator(JwtValidators.createDefaultWithValidators(
+                new JwtClaimValidator<String>(SecurityUtil.TOKEN_TYPE_CLAIM,
+                        SecurityUtil.ACCESS_TOKEN_TYPE::equals)));
+        return jwtDecoder;
     }
 
     @Bean

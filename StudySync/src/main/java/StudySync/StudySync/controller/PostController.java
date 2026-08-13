@@ -4,6 +4,7 @@ import StudySync.StudySync.domain.enums.ContentType;
 import StudySync.StudySync.domain.request.CreatePostRequest;
 import StudySync.StudySync.domain.request.UpdatePostRequest;
 import StudySync.StudySync.domain.response.PostResponse;
+import StudySync.StudySync.domain.response.FileUploadResponse;
 import StudySync.StudySync.service.PostService;
 import StudySync.StudySync.util.ApiMessage;
 import jakarta.validation.Valid;
@@ -81,11 +82,10 @@ public class PostController {
 
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     @ApiMessage("Upload document success")
-    public ResponseEntity<Void> upload(
+    public ResponseEntity<FileUploadResponse> upload(
             @RequestParam MultipartFile file
       ) {
-        postService.uploadFile(file);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(postService.uploadFile(file));
     }
 
     @PutMapping("/{id}")

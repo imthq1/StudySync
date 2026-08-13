@@ -1,0 +1,113 @@
+name: Deploy backend to EC2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "StudySync/**"
+      - ".github/workflows/deploy-backend-ec2.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-production
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: StudySync
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Run tests
+        env:
+          SPRING_DATASOURCE_URL: ${{ secrets.CI_SPRING_DATASOURCE_URL }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.CI_SPRING_DATASOURCE_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.CI_SPRING_DATASOURCE_PASSWORD }}
+          JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
+          SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+        run: ./mvnw --batch-mode clean verify
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ vars.EC2_USER || 'ubuntu' }}
+      EC2_SSH_PORT: ${{ vars.EC2_SSH_PORT || '22' }}
+      EC2_DEPLOY_PATH: ${{ vars.EC2_DEPLOY_PATH || '/opt/studysync/backend' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        env:
+          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          EC2_KNOWN_HOSTS: ${{ secrets.EC2_KNOWN_HOSTS }}
+        run: |
+          test -n "$EC2_HOST"
+          test -n "$EC2_SSH_PRIVATE_KEY"
+          test -n "$EC2_KNOWN_HOSTS"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$EC2_SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$EC2_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Prepare deployment directory
+        run: |
+          ssh -p "$EC2_SSH_PORT" "$EC2_USER@$EC2_HOST" \
+            "mkdir -p '$EC2_DEPLOY_PATH'"
+
+      - name: Upload backend source
+        run: |
+          rsync -az --delete \
+            --exclude '.env' \
+            --exclude 'target/' \
+            --exclude 'uploads/' \
+            -e "ssh -p $EC2_SSH_PORT" \
+            StudySync/ "$EC2_USER@$EC2_HOST:$EC2_DEPLOY_PATH/"
+
+      - name: Build and restart backend
+        run: |
+          ssh -p "$EC2_SSH_PORT" "$EC2_USER@$EC2_HOST" \
+            bash -s -- "$EC2_DEPLOY_PATH" <<'REMOTE'
+          set -Eeuo pipefail
+          cd "$1"
+
+          if [ ! -f .env ]; then
+            echo "Missing $1/.env. Create it on EC2 before deploying." >&2
+            exit 1
+          fi
+
+          docker compose config --quiet
+          docker compose build --pull
+          docker compose up -d --remove-orphans
+
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8080/actuator/health/readiness >/dev/null; then
+              docker compose ps
+              exit 0
+            fi
+            sleep 5
+          done
+
+          docker compose ps
+          docker compose logs --tail=200 backend
+          exit 1
+          REMOTE
