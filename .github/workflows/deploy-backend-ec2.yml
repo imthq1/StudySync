@@ -71,7 +71,8 @@ jobs:
 
       - name: Prepare deployment directory
         run: |
-          ssh -p "$EC2_SSH_PORT" "$EC2_USER@$EC2_HOST" \
+          ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes \
+            -p "$EC2_SSH_PORT" "$EC2_USER@$EC2_HOST" \
             "mkdir -p '$EC2_DEPLOY_PATH'"
 
       - name: Upload backend source
@@ -80,12 +81,13 @@ jobs:
             --exclude '.env' \
             --exclude 'target/' \
             --exclude 'uploads/' \
-            -e "ssh -p $EC2_SSH_PORT" \
+            -e "ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes -p $EC2_SSH_PORT" \
             StudySync/ "$EC2_USER@$EC2_HOST:$EC2_DEPLOY_PATH/"
 
       - name: Build and restart backend
         run: |
-          ssh -p "$EC2_SSH_PORT" "$EC2_USER@$EC2_HOST" \
+          ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes \
+            -p "$EC2_SSH_PORT" "$EC2_USER@$EC2_HOST" \
             bash -s -- "$EC2_DEPLOY_PATH" <<'REMOTE'
           set -Eeuo pipefail
           cd "$1"
