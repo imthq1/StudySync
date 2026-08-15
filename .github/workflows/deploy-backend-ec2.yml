@@ -90,15 +90,22 @@ jobs:
           set -Eeuo pipefail
           cd "$1"
 
-          if [ ! -f .env ]; then
-            echo "Missing $1/.env. Create it on EC2 before deploying." >&2
+          if [ ! -s .env ]; then
+            echo "Missing or empty $1/.env. Create it on EC2 before deploying." >&2
             exit 1
           fi
 
+          for required_var in DB_HOST DB_NAME DB_USER DB_PASSWORD JWT_SECRET AWS_REGION AWS_S3_BUCKET; do
+            if ! grep -qE "^${required_var}=" .env; then
+              echo "Missing ${required_var} in $1/.env" >&2
+              exit 1
+            fi
+          done
+
           if docker compose version >/dev/null 2>&1; then
-            compose() { docker compose "$@"; }
+            compose() { docker compose --env-file .env "$@"; }
           elif command -v docker-compose >/dev/null 2>&1; then
-            compose() { docker-compose "$@"; }
+            compose() { docker-compose --env-file .env "$@"; }
           else
             echo "Docker Compose is not installed on EC2. Install the Docker Compose plugin and rerun this workflow." >&2
             exit 1
