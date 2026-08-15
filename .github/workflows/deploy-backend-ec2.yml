@@ -157,6 +157,12 @@ jobs:
             sleep 5
           done
 
+          echo "Backend did not become ready. Diagnostic response:"
+          curl --silent --show-error --max-time 10 \
+            --write-out '\nHTTP status: %{http_code}\n' \
+            http://127.0.0.1:8080/actuator/health/readiness || true
+          echo "Container state:"
+          docker inspect --format '{{.State.Status}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}unavailable{{end}}' studysync-backend || true
           compose ps
           compose logs --tail=200 backend
           exit 1
