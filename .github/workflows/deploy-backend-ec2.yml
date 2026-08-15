@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 concurrency:
   group: backend-production
@@ -51,9 +52,31 @@ jobs:
       EC2_USER: ${{ vars.EC2_USER || 'ubuntu' }}
       EC2_SSH_PORT: ${{ vars.EC2_SSH_PORT || '22' }}
       EC2_DEPLOY_PATH: ${{ vars.EC2_DEPLOY_PATH || '/home/ubuntu/studysync/backend' }}
+      AWS_REGION: ${{ vars.AWS_REGION || 'ap-southeast-1' }}
+      AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID || '158016107704' }}
+      AWS_ROLE_TO_ASSUME: ${{ vars.AWS_ROLE_TO_ASSUME || 'arn:aws:iam::158016107704:role/GitHubActionsECRPush' }}
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY || 'studysync-backend' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push backend image
+        env:
+          ECR_REGISTRY: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build --pull -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" StudySync
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Configure SSH
         env:
@@ -69,34 +92,36 @@ jobs:
           printf '%s\n' "$EC2_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Prepare deployment directory
+      - name: Upload Docker Compose file
         run: |
-          for attempt in $(seq 1 5); do
-            if ssh -o ConnectTimeout=15 -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes -p "$EC2_SSH_PORT" "$EC2_USER@$EC2_HOST" "mkdir -p '$EC2_DEPLOY_PATH'"; then
-              exit 0
-            fi
-            echo "SSH attempt $attempt failed; retrying in 15 seconds..." >&2
-            sleep 15
-          done
-          echo "Unable to connect to EC2 after 5 attempts." >&2
-          exit 1
-
-      - name: Upload backend source
-        run: |
-          rsync -az --delete \
-            --exclude '.env' \
-            --exclude 'target/' \
-            --exclude 'uploads/' \
-            -e "ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes -p $EC2_SSH_PORT" \
-            StudySync/ "$EC2_USER@$EC2_HOST:$EC2_DEPLOY_PATH/"
+          ssh -o ConnectTimeout=15 -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes \
+            -p "$EC2_SSH_PORT" "$EC2_USER@$EC2_HOST" \
+            "mkdir -p '$EC2_DEPLOY_PATH'"
+          scp -o ConnectTimeout=15 -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes \
+            -P "$EC2_SSH_PORT" StudySync/docker-compose.yml \
+            "$EC2_USER@$EC2_HOST:$EC2_DEPLOY_PATH/docker-compose.yml"
 
       - name: Build and restart backend
         run: |
           ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes \
             -p "$EC2_SSH_PORT" "$EC2_USER@$EC2_HOST" \
-            bash -s -- "$EC2_DEPLOY_PATH" <<'REMOTE'
+            bash -s -- "$EC2_DEPLOY_PATH" \
+              "$AWS_REGION" "$AWS_ACCOUNT_ID" "$ECR_REPOSITORY" "${{ github.sha }}" <<'REMOTE'
           set -Eeuo pipefail
           cd "$1"
+          AWS_REGION="$2"
+          AWS_ACCOUNT_ID="$3"
+          ECR_REPOSITORY="$4"
+          IMAGE_TAG="$5"
+          ECR_REGISTRY="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+          export ECR_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+          if ! command -v aws >/dev/null 2>&1; then
+            echo "AWS CLI is not installed on EC2." >&2
+            exit 1
+          fi
+          aws ecr get-login-password --region "$AWS_REGION" \
+            | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
           if [ ! -s .env ]; then
             echo "Missing or empty $1/.env. Create it on EC2 before deploying." >&2
@@ -120,8 +145,9 @@ jobs:
           fi
 
           compose config > /dev/null
-          compose build --pull
+          compose pull
           compose up -d --remove-orphans
+          docker image prune -f
 
           for attempt in $(seq 1 30); do
             if curl --fail --silent http://127.0.0.1:8080/actuator/health/readiness >/dev/null; then
