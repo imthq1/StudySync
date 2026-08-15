@@ -115,7 +115,7 @@ jobs:
           IMAGE_TAG="$5"
           ECR_REGISTRY="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
           export ECR_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
+ 
           if ! command -v aws >/dev/null 2>&1; then
             echo "AWS CLI is not installed on EC2." >&2
             exit 1
