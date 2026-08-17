@@ -144,14 +144,21 @@ jobs:
             exit 1
           fi
 
+          # Fail fast if the uploaded Compose file does not reference the image
+          # that this workflow just pushed. This prevents falling back to a local
+          # build such as backend-backend.
           compose config > /dev/null
-          compose pull
+          compose config --images | grep -Fx "$ECR_IMAGE"
+
+          # Pull the exact immutable SHA tag and never build from EC2 source.
+          docker pull "$ECR_IMAGE"
 
           # Remove any leftover container with the fixed name before recreating it.
           # This also handles containers created by an older Compose project name.
           docker rm -f studysync-backend >/dev/null 2>&1 || true
 
-          compose up -d --remove-orphans
+          compose up -d --no-build --force-recreate --remove-orphans
+          test "$(docker inspect --format '{{.Config.Image}}' studysync-backend)" = "$ECR_IMAGE"
           docker image prune -f
 
           compose ps
