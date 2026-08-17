@@ -8,6 +8,8 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -29,6 +31,16 @@ public class SecurityConfiguration {
         this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
         this.oAuth2LoginSuccessHandler = oAuth2LoginSuccessHandler;
         this.clientRegistrationRepository = clientRegistrationRepository;
+    }
+
+    /**
+     * The WebSocket handshake must reach the WebSocket handler before STOMP
+     * CONNECT carries the JWT. Bypass the HTTP bearer filter for the handshake;
+     * the CONNECT interceptor authenticates the actual WebSocket session.
+     */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers("/ws", "/ws/**", "/actuator/**");
     }
 
     @Bean
