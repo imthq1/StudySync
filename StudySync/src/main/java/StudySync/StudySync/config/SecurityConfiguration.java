@@ -49,7 +49,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(whiteList).permitAll()
-                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/ws", "/ws/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/study-rooms", "/api/v1/study-rooms/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/search", "/api/v1/follows/feed").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/me/profile", "/api/v1/users/me/contributions", "/api/v1/users/me/statistics").authenticated()
