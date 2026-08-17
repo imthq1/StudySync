@@ -1,8 +1,6 @@
 services:
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${ECR_IMAGE}
     container_name: studysync-backend
     restart: unless-stopped
     ports:
