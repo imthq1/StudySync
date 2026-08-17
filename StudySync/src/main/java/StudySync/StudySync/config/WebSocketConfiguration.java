@@ -18,6 +18,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @Configuration
@@ -26,19 +27,22 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     private final JwtDecoder jwtDecoder;
     private final StudyRoomMemberRepository memberRepository;
-    private final String allowedOrigin;
+    private final String[] allowedOrigins;
 
     public WebSocketConfiguration(JwtDecoder jwtDecoder,
                                   StudyRoomMemberRepository memberRepository,
-                                   @Value("${studysync.websocket.allowed-origin:http://localhost:5173}") String allowedOrigin) {
+                                   @Value("${studysync.websocket.allowed-origin:https://main.d1rn6pwilo87ec.amplifyapp.com}") String allowedOrigin) {
         this.jwtDecoder = jwtDecoder;
         this.memberRepository = memberRepository;
-        this.allowedOrigin = allowedOrigin;
+        this.allowedOrigins = Arrays.stream(allowedOrigin.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .toArray(String[]::new);
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins(allowedOrigin);
+        registry.addEndpoint("/ws").setAllowedOrigins(allowedOrigins);
     }
 
     @Override
