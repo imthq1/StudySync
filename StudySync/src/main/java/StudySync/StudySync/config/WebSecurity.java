@@ -14,7 +14,7 @@ public class WebSecurity implements WebMvcConfigurer {
     private final String allowedOrigin;
 
     public WebSecurity(FileStorageService fileStorageService,
-                       @Value("${studysync.cors.allowed-origin:http://localhost:5173}") String allowedOrigin) {
+                       @Value("${studysync.cors.allowed-origin:https://main.d1rn6pwilo87ec.amplifyapp.com}") String allowedOrigin) {
         this.fileStorageService = fileStorageService;
         this.allowedOrigin = allowedOrigin;
     }
