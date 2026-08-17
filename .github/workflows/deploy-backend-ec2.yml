@@ -146,6 +146,11 @@ jobs:
 
           compose config > /dev/null
           compose pull
+
+          # Remove any leftover container with the fixed name before recreating it.
+          # This also handles containers created by an older Compose project name.
+          docker rm -f studysync-backend >/dev/null 2>&1 || true
+
           compose up -d --remove-orphans
           docker image prune -f
 
